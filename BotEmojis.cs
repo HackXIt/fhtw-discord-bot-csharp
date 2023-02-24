@@ -3,5 +3,5 @@
 public static class BotEmojis
 {
     public static readonly string Pin = ":pushpin:"; // 📌
-    public static readonly string RemovePin = ":no_entry_sign:"; // ⛔
+    public static readonly string RemovePin = ":no_entry_sign:"; // :no_entry_sign:
 }
