@@ -12,6 +12,7 @@
       <PackageReference Include="DSharpPlus" Version="4.3.0" />
       <PackageReference Include="DSharpPlus.SlashCommands" Version="4.3.0" />
       <PackageReference Include="NLog" Version="5.1.2" />
+      <PackageReference Include="NLog.Extensions.Logging" Version="5.2.2" />
     </ItemGroup>
 
 </Project>
