@@ -1,6 +1,7 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bic-fhtw-discord-bot", "bic-fhtw-discord-bot.csproj", "{8233EEA3-0568-4BB9-ACA0-C9013E6CC35F}"
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BIC-FHTW.WebApp", "BIC-FHTW.WebApp\BIC-FHTW.WebApp.csproj", "{6F533030-15CE-4863-812A-E122E93628B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BIC-FHTW.DiscordBot", "BIC-FHTW.DiscordBot\BIC-FHTW.DiscordBot.csproj", "{7310C305-7FDA-404E-9622-00EAE0183351}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -8,9 +9,13 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8233EEA3-0568-4BB9-ACA0-C9013E6CC35F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8233EEA3-0568-4BB9-ACA0-C9013E6CC35F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8233EEA3-0568-4BB9-ACA0-C9013E6CC35F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8233EEA3-0568-4BB9-ACA0-C9013E6CC35F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F533030-15CE-4863-812A-E122E93628B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F533030-15CE-4863-812A-E122E93628B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F533030-15CE-4863-812A-E122E93628B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F533030-15CE-4863-812A-E122E93628B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7310C305-7FDA-404E-9622-00EAE0183351}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7310C305-7FDA-404E-9622-00EAE0183351}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7310C305-7FDA-404E-9622-00EAE0183351}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7310C305-7FDA-404E-9622-00EAE0183351}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
