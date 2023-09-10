@@ -1,73 +1,109 @@
 ﻿using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
-using System.Text.Json.Nodes;
+using System.Net.Mail;
+using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using BIC_FHTW.Database.Models;
 using BIC_FHTW.DiscordBot.Services;
+using Discord;
 using Discord.Commands;
-using Newtonsoft.Json;
 
 namespace BIC_FHTW.DiscordBot.Modules;
 
+[RequireBotPermission(GuildPermission.ManageRoles)]
 public class RegistrationModule : ModuleBase<SocketCommandContext>
 {
-    private readonly IDatabaseService _service;
-    private const string RequiredDomain = "technikum-wien.at";
-    private const string WebAppUrl = "https://localhost:5000";
-    
-    public RegistrationModule(IDatabaseService databaseService)
+    private const int TokenLength = 32;
+    private readonly IRoleService _roleService;
+    private readonly IUserService _userService;
+
+    public RegistrationModule(IRoleService roleService, IUserService userService)
     {
-        _service = databaseService;
+        _roleService = roleService ?? throw new ArgumentNullException(nameof(roleService));
+        _userService = userService ?? throw new ArgumentNullException(nameof(userService));
     }
     
     [Command("register")]
-    [Summary("Registers a user with their email address.")]
-    public async Task HandleRegisterCommandAsync(SocketCommandContext context, [Remainder] string email)
+    [Summary("Registers a user with their student email address.")]
+    public async Task RegisterAsync([Remainder][Summary("The student email address to register with.")] string email)
     {
-        if (!IsValidDomain(email, RequiredDomain))
+        if (!IsValidEmail(email))
         {
-            await ReplyAsync($"Invalid email domain. Please use your provided student email address with the domain '{RequiredDomain}'.");
+            await ReplyAsync("Invalid email address. Please make sure you're using the correct domain.");
             return;
         }
-        // TODO Verify correctness of email address syntax
 
-        var discordId = Context.User.Id.ToString();
-
-        var activationToken = _service.GenerateUniqueToken();
-        _service.AddUser(discordId, email, activationToken);
-
-        /*
-        string activationLink = $"https://your-webserver-url/activate?token={token}";
-        await _service.SendEmailAsync(email, "Discord Bot Activation", $"Please click the following link to activate your account: {activationLink}");
-        */
-        
-        // Send a request to the ASP.NET Core web application to send the activation email
-        using var httpClient = new HttpClient();
-        var requestData = new JsonObject
+        var existingUser = await _userService.GetUserByDiscordIdAsync(Context.User.Id);
+        if (existingUser.Status == DiscordUser.UserStatus.Active)
         {
-            { "EmailAddress", email },
-            { "Token", activationToken }
-        };
-        var content = new StringContent(requestData.ToJsonString(), Encoding.UTF8, "application/json");
-        var response = await httpClient.PostAsync($"{WebAppUrl}/send-activation-email", content);
+            await ReplyAsync("You are already registered.");
+            return;
+        }
+
+        var token = GenerateSecureToken(TokenLength);
+        await _userService.AddUserAsync(Context.User.Id, token);
+        
+        /*
+        var response = await ForwardRegistrationRequestToWebApi(
+            $"{Environment.GetEnvironmentVariable("API-URL")}/register",
+            Context.User.Id, email, Environment.GetEnvironmentVariable("API-KEY") ?? string.Empty);
+
+
 
         if (response.IsSuccessStatusCode)
         {
-            await ReplyAsync("An activation email has been sent to the provided address. Please check your inbox and click the link to complete your registration.");
+            await ReplyAsync("Registration successful! Please check your email for an activation link.");
         }
         else
         {
-            await ReplyAsync("There was an error sending the activation email. Please try again later.");
+            await ReplyAsync("Registration failed. Please try again later.");
+        }
+         */
+    }
+
+    private bool IsValidEmail(string email)
+    {
+        try
+        {
+            var addr = new MailAddress(email);
+            return addr.Address == email && IsValidDomain(email);
+        }
+        catch (Exception ex) when (ex is ArgumentNullException ||
+                                   ex is ArgumentException ||
+                                   ex is FormatException)
+        {
+            return false;
         }
     }
-    
-    private bool IsValidDomain(string email, string requiredDomain)
-    {
-        var domainIndex = email.LastIndexOf('@');
-        if (domainIndex == -1) return false;
 
-        var domain = email.Substring(domainIndex + 1);
-        return domain.Equals(requiredDomain, StringComparison.OrdinalIgnoreCase);
+    private bool IsValidDomain(string email)
+    {
+        var domainPattern = $@"^[\w\.-]+@{Environment.GetEnvironmentVariable("ALLOWED_DOMAIN")}$";
+        return Regex.IsMatch(email, domainPattern, RegexOptions.IgnoreCase);
+    }
+
+    private async Task<HttpResponseMessage> ForwardRegistrationRequestToWebApi(string webApiUrl, ulong discordUserId, string email, string apikey)
+    {
+        using var httpClient = new HttpClient();
+        var content = new FormUrlEncodedContent(new[]
+        {
+            new KeyValuePair<string, string>("discordUserId", discordUserId.ToString()),
+            new KeyValuePair<string, string>("email", email),
+            new KeyValuePair<string, string>("apikey", apikey)
+        });
+
+        return await httpClient.PostAsync(webApiUrl, content);
+    }
+    
+    private string GenerateSecureToken(int length)
+    {
+        using (var randomNumberGenerator = new RNGCryptoServiceProvider())
+        {
+            var randomNumber = new byte[length];
+            randomNumberGenerator.GetBytes(randomNumber);
+            return Convert.ToBase64String(randomNumber);
+        }
     }
 }

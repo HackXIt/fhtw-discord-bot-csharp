@@ -2,3 +2,6 @@
 .idea
 bin
 obj
+*.db
+appsettings.*json
+DevGPT_docs/

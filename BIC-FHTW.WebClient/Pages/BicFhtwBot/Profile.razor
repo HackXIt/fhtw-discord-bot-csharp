@@ -1,0 +1,225 @@
+﻿@page "/bic-fhtw/Profile"
+@using BIC_FHTW.Shared
+@attribute [Authorize]
+
+@inject DiscordAuthenticationStateProvider AuthState
+@inject Services.Core.ITagApi TagApi
+@inject Services.Core.IRoleApi RoleApi
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <!--profile info here-->
+        </div>
+        <div class="col-sm-auto">
+            @if (AuthState.HasValidInfoCache)
+            {
+                <span class="display-3 align-middle">@AuthState.Username </span>
+                <img src=@string.Format("https://cdn.discordapp.com/avatars/{0}/{1}.webp",AuthState.UserId,AuthState.AvatarHash) class="rounded-circle img-thumbnail img-fluid" />
+            }
+        </div>
+    </div>
+    <!--Tags-->
+    <div class="row mt-3">
+        <div class="col">
+            <div class="rounded border border-success">
+                <h2 class="text-center m-2">Subscribed Tags</h2>
+                <div class="m-2">
+                    @if (_subscribedTags == null)
+                    {
+                        <div class="container-fluid d-flex">
+                            <div class="row justify-content-center align-items-center w-100" style="padding-left:inherit;margin:inherit">
+                                <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <form class="input-group mb-3" @onsubmit="(async () => await SubmitSubscribedTagsAsync())">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary" type="submit">Add tags</button>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Example: tag1 tag2" aria-label="Example text with button addon" aria-describedby="button-addon1" @bind-value="_subscribedTagsValue">
+                        </form>
+                        <ul class="list-inline">
+                            @foreach (var tag in _subscribedTags)
+                            {
+                                <li class="border-secondary list-inline-item badge badge-secondary d-inline-flex">
+                                    <button type="button" class="btn btn-dark d-flex" @onclick="(async () => await UnsubscribeTagAsync(tag))" style="padding:0;margin-right:3px; border-radius:50%;">
+                                        <svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12">
+                                            <g fill="none" fill-rule="evenodd" aria-hidden="true"><path d="M0 0h12v12H0"></path><path class="fill" fill="#FFFFFF" d="M9.5 3.205L8.795 2.5 6 5.295 3.205 2.5l-.705.705L5.295 6 2.5 8.795l.705.705L6 6.705 8.795 9.5l.705-.705L6.705 6"></path></g>
+                                        </svg>
+                                    </button>
+                                    <span>@tag</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            <div class="rounded border">
+
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            <div class="rounded border border-danger">
+                <h2 class="text-center m-2">Blacklisted Tags</h2>
+                <div class="m-2">
+                    @if (_blacklistedTags == null)
+                    {
+                        <div class="container-fluid d-flex">
+                            <div class="row justify-content-center align-items-center w-100" style="padding-left:inherit;margin:inherit">
+                                <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <form class="input-group mb-3" @onclick="(async () => await SubmitBlacklistedTagsAsync())">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary" type="button">Add tags</button>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Example: tag1 tag2" aria-label="Example text with button addon" aria-describedby="button-addon1" @bind="_blacklistedTagsValue">
+                        </form>
+                        <ul class="list-inline">
+                            @foreach (var tag in _blacklistedTags)
+                            {
+                                <li class="border-secondary list-inline-item badge badge-secondary d-inline-flex">
+                                    <button type="button" class="btn btn-dark d-flex" @onclick="(async () => await UnblacklistTagAsync(tag))" style="padding:0;margin-right:3px; border-radius:50%;">
+                                        <svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12">
+                                            <g fill="none" fill-rule="evenodd" aria-hidden="true"><path d="M0 0h12v12H0"></path><path class="fill" fill="#FFFFFF" d="M9.5 3.205L8.795 2.5 6 5.295 3.205 2.5l-.705.705L5.295 6 2.5 8.795l.705.705L6 6.705 8.795 9.5l.705-.705L6.705 6"></path></g>
+                                        </svg>
+                                    </button>
+                                    <span>@tag</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    @if (_guilds != null && _guilds.Count != 0)
+    {
+        <h1 class="text-center m-2">Guilds</h1>
+        @foreach (var guild in _guilds)
+        {
+            <div class="row mt-3">
+                @foreach (var role in guild.Roles)
+                {
+                    <div> @role.RoleName </div>
+                }
+            </div>
+        }
+    }
+    <div class="row mt-3" />
+</div>
+
+
+
+@code {
+
+    string _blacklistedTagsValue = string.Empty;
+    string _subscribedTagsValue = string.Empty;
+
+    List<string> _subscribedTags;
+    List<string> _blacklistedTags;
+
+    List<BIC_FHTW.Shared.RoleDTO> _recievedRequestableRoles;
+    List<BIC_FHTW.Shared.RoleDTO> _requestableRoles;
+
+    List<BIC_FHTW.Shared.GuildWithRolesDTO> _guilds;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await AuthState.GetAuthenticationStateAsync();
+
+        var tagFetchTask = TagApi.GetUserTaglistAsync();
+        var guildFetchTask = RoleApi.GetUserGuildsWithRequestableRoles(AuthState.UserId);
+
+        var RolesFethTask = RoleApi.GetDiscordRolesAsync(BIC_FHTW.Shared.Constants.RozServerId);
+        var RequestableRoleFetchTask = RoleApi.GetRequestableRoleIdsAsync(BIC_FHTW.Shared.Constants.RozServerId);
+
+        StateHasChanged();
+
+
+
+        var userTagList = await tagFetchTask;
+
+        _subscribedTags = new List<string>((IEnumerable<string>)userTagList.SubscribedTags);
+        _blacklistedTags = new List<string>((IEnumerable<string>)userTagList.BlacklistedTags);
+
+        var guilds = await guildFetchTask;
+
+        _guilds = new List<GuildWithRolesDTO>((IEnumerable<GuildWithRolesDTO>)guilds);
+    }
+
+    protected async Task SubmitBlacklistedTagsAsync()
+    {
+        var tagsToBlacklist = _blacklistedTagsValue.ToLower()
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .Where(t => !_blacklistedTags.Contains(t))
+            .Distinct()
+            .ToArray();
+
+        if (tagsToBlacklist.Length == 0)
+        {
+            // mark an error
+            return;
+        }
+
+        await TagApi.BlacklistAsync(tagsToBlacklist);
+
+        _blacklistedTags.AddRange(tagsToBlacklist);
+        _subscribedTags.RemoveAll(t => tagsToBlacklist.Contains(t));
+
+        _blacklistedTagsValue = string.Empty;
+    }
+
+    protected async Task SubmitSubscribedTagsAsync()
+    {
+        var tagsToSubscribe = _subscribedTagsValue.ToLower()
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .Where(t => !_subscribedTags.Contains(t))
+            .Distinct()
+            .ToArray();
+
+        if (tagsToSubscribe.Length == 0)
+        {
+            // mark an error
+            return;
+        }
+
+        await TagApi.SubscribeAsync(tagsToSubscribe);
+
+        _subscribedTags.AddRange(tagsToSubscribe);
+        _blacklistedTags.RemoveAll(t => tagsToSubscribe.Contains(t));
+
+        _subscribedTagsValue = string.Empty;
+    }
+
+    protected async Task UnsubscribeTagAsync(string tag)
+    {
+        await TagApi.UnsubscribeAsync(new[] { tag });
+
+        _subscribedTags.Remove(tag);
+    }
+
+    protected async Task UnblacklistTagAsync(string tag)
+    {
+        await TagApi.UnblacklistAsync(new[] { tag });
+
+        _blacklistedTags.Remove(tag);
+    }
+}

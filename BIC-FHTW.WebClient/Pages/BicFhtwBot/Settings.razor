@@ -1,0 +1,82 @@
+﻿@page "/bic-fhtw/settings"
+@attribute [Authorize(Policy = Constants.IsBotOwner)]
+
+@using BIC_FHTW.Shared
+
+@inject HttpClient Http
+
+<h3>Settings</h3>
+
+<div style="max-width:400px">
+    @if (_botSettings != null)
+    {
+        <EditForm Model="_botSettings" OnValidSubmit="@FormSubmitted">
+            <fieldset>
+                <div class="form-group">
+                    <label for="Prefix">Bot Prefix</label>
+                    <InputText @bind-Value="_botSettings.Prefix" class="form-control" id="Prefix" />
+                </div>
+                <div class="form-group">
+                    <label for="csCommands">Enable Case Sensitive Commands</label>
+                    <InputCheckbox @bind-Value="_botSettings.CaseSensitiveComands" class="form-control move-left" id="csCommands" />
+                </div>
+                <div class="form-group">
+                    <label for="mentionPrefix">Enable Mention Prefix</label>
+                    <InputCheckbox @bind-Value="_botSettings.UseMentionPrefix" class="form-control move-left" id="mentionPrefix" />
+                </div>
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </fieldset>
+        </EditForm>
+    }
+    else
+    {
+        <form>
+            <fieldset disabled>
+                <div class="form-group">
+                    <label for="Prefix">Bot Prefix</label>
+                    <input type="text" class="form-control" id="Prefix" />
+                </div>
+                <div class="form-group">
+                    <label for="csCommands">Enable Case Sensitive Commands</label>
+                    <input type="checkbox" class="form-control move-left" id="csCommands" />
+                </div>
+                <div class="form-group">
+                    <label for="mentionPrefix">Enable Mention Prefix</label>
+                    <input type="checkbox" class="form-control move-left" id="mentionPrefix" />
+                </div>
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </fieldset>
+        </form>
+    }
+
+</div>
+
+@code {
+    SettingsDTO _botSettings;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _botSettings = await Http.GetFromJsonAsync<SettingsDTO>("api/settings");
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
+    async Task FormSubmitted(EditContext editContext)
+    {
+        try
+        {
+            await Http.PostAsJsonAsync("api/settings", _botSettings);
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+
+    }
+}
