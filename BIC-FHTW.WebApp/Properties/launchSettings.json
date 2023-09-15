@@ -11,8 +11,8 @@
     "BIC_FHTW.WebApp": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "nativeDebugging": true,
+      "launchBrowser": false,
+      "nativeDebugging": false,
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {

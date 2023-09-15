@@ -3,5 +3,5 @@
 public static class Constants
 {
     public const string IsBotOwner = nameof(IsBotOwner);
-    public const ulong RozServerId = 142791448570363904;
+    public const ulong RozServerId = 885068620848300082;
 }

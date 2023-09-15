@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BIC-FHTW.Shared", "BIC-FHTW
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BIC-FHTW.WebClient", "BIC-FHTW.WebClient\BIC-FHTW.WebClient.csproj", "{47A30910-2C2A-4DF5-84D1-F5CBF5153189}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BIC-FHTW.Scraper", "BIC-FHTW.Scraper\BIC-FHTW.Scraper.csproj", "{05C832DF-7144-4ED5-9ED9-54316F447434}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BIC-FHTW.ThirdParty", "BIC-FHTW.ThirdParty\BIC-FHTW.ThirdParty.csproj", "{72E2A896-F6A2-4A7A-BA8A-42436D1DAE47}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,5 +39,13 @@ Global
 		{47A30910-2C2A-4DF5-84D1-F5CBF5153189}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47A30910-2C2A-4DF5-84D1-F5CBF5153189}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47A30910-2C2A-4DF5-84D1-F5CBF5153189}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05C832DF-7144-4ED5-9ED9-54316F447434}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05C832DF-7144-4ED5-9ED9-54316F447434}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05C832DF-7144-4ED5-9ED9-54316F447434}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05C832DF-7144-4ED5-9ED9-54316F447434}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72E2A896-F6A2-4A7A-BA8A-42436D1DAE47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72E2A896-F6A2-4A7A-BA8A-42436D1DAE47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72E2A896-F6A2-4A7A-BA8A-42436D1DAE47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72E2A896-F6A2-4A7A-BA8A-42436D1DAE47}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

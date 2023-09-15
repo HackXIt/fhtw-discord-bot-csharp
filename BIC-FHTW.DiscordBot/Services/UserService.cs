@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using BIC_FHTW.Database.Models;
 using BIC_FHTW.Database.Services;
+using BIC_FHTW.Scraper.Scrapers.Userprofile;
+using BIC_FHTW.Shared;
 using Discord.WebSocket;
 
 namespace BIC_FHTW.DiscordBot.Services;
@@ -11,20 +13,45 @@ public class UserService : IUserService
     private readonly DiscordSocketClient _client;
     private readonly UserRepositoryManager _userRepositoryManager;
 
-    public UserService(DiscordSocketClient client, UserRepositoryManager userManager)
+    public UserService(DiscordSocketClient client, UserRepositoryManager userRepositoryManager)
     {
         _client = client ?? throw new ArgumentNullException(nameof(client));
-        _userRepositoryManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+        _userRepositoryManager = userRepositoryManager ?? throw new ArgumentNullException(nameof(userRepositoryManager));
     }
 
-    public Task<DiscordUser> AddUserAsync(ulong discordUserId, string activationToken)
-        => _userRepositoryManager.AddUserAsync(discordUserId, activationToken);
+    public async Task<DiscordUserDTO> AddUserAsync(ulong discordUserId, string activationToken, string activationMail)
+        => EntityFactory.ConvertFromDiscordUser(await _userRepositoryManager.AddUserAsync(discordUserId, activationToken, activationMail)) ?? throw new InvalidOperationException();
 
-    public Task<DiscordUser> GetUserByDiscordIdAsync(ulong discordUserId)
-        => _userRepositoryManager.GetUserByDiscordIdAsync(discordUserId);
+    public async Task<DiscordUserDTO> GetUserByDiscordIdAsync(ulong discordUserId)
+        => EntityFactory.ConvertFromDiscordUser(await _userRepositoryManager.GetUserByDiscordIdAsync(discordUserId)) ?? throw new InvalidOperationException();
 
-    public Task<DiscordUser> GetUserByEmailAsync(string email)
+    public async Task<DiscordUserDTO?> GetUserByActivationTokenAsync(string activationToken)
+        => EntityFactory.ConvertFromDiscordUser(await _userRepositoryManager.GetUserByActivationTokenAsync(activationToken)) ?? null;
+
+    public async Task<DiscordUserDTO?> GetUserByStudentUidAsync(string studentUid)
+        => EntityFactory.ConvertFromDiscordUser(await _userRepositoryManager.GetDiscordUserByStudentUidAsync(studentUid)) ?? null;
+
+    public async Task UpdateUserStatusAsync(DiscordUser discordUser, DiscordUser.UserStatus newStatus)
+        => await _userRepositoryManager.UpdateUserStatusAsync(discordUser, newStatus);
+
+    public async Task<DiscordUserDTO> LinkStudentToDiscordUserAsync(string? studentUid, ulong discordUserId)
+        => EntityFactory.ConvertFromDiscordUser(await _userRepositoryManager.LinkStudentToDiscordUserAsync(studentUid, discordUserId)) ?? throw new InvalidOperationException();
+
+    public async Task<StudentDTO?> GetStudentByUidAsync(string studentUid)
+        => EntityFactory.ConvertFromStudent(await _userRepositoryManager.GetStudentByUidAsync(studentUid));
+
+    public async Task<StudentDTO?> GetStudentByDiscordIdAsync(ulong discordUserId)
+        => EntityFactory.ConvertFromStudent(await _userRepositoryManager.GetStudentByDiscordIdAsync(discordUserId));
+
+    public async Task<DiscordUserDTO?> ActivateUserWithStudentInformation(ulong discordUserId,
+        UserprofileScrapeResult scrapeResult)
     {
-        throw new NotImplementedException();
+        var student = EntityFactory.ConvertFromUserprofileScrapeResult(scrapeResult);
+        if (student != null)
+        {
+            EntityFactory.ConvertFromDiscordUser(await _userRepositoryManager.AddStudentAndActivateUserAsync(discordUserId, student));
+        }
+
+        return null;
     }
 }

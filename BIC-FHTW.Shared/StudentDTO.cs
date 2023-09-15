@@ -1,9 +1,7 @@
-﻿using System.Net.Mail;
-
-namespace BIC_FHTW.Shared;
+﻿namespace BIC_FHTW.Shared;
 
 public class StudentDTO
 {
-    public string UID => MailAddress.User;
-    public MailAddress MailAddress { get; set; }
+    // ReSharper disable once InconsistentNaming
+    public string UID { get; set; } = string.Empty;
 }

@@ -4,5 +4,5 @@ namespace BIC_FHTW.WebClient.Services.Core;
 
 public interface IRegisterApi
 {
-    Task Register(string mailAddress);
+    Task Register(string token);
 }

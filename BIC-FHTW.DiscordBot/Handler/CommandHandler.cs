@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
-using BIC_FHTW.DiscordBot.Attributes;
-using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace BIC_FHTW.DiscordBot;
+namespace BIC_FHTW.DiscordBot.Handler;
 
-internal class CommandHandler
+internal class CommandHandler : IHandler
 {
-    private Emoji PushpinEmoji = new("\ud83d\udccc");   // 📌
-    private Emoji NoEntryEmoji = new("\u26d4");         // ⛔
     private readonly DiscordSocketClient _client;
     private readonly CommandService _commands;
     private readonly BotSettings _settings;
@@ -35,31 +31,14 @@ internal class CommandHandler
         BindEvents();
     }
 
-    private void BindEvents()
+    public void BindEvents()
     {
-        _client.Ready += HandleReady;
-        _client.Log += LogAsync;
         _client.MessageReceived += HandleCommandAsync;
-        _client.ReactionAdded += HandleReactionAddedAsync;
     }
 
-    internal void UnbindEvents()
+    public void UnbindEvents()
     {
-        _client.Ready -= HandleReady;
-        _client.Log -= LogAsync;
         _client.MessageReceived -= HandleCommandAsync;
-        _client.ReactionAdded -= HandleReactionAddedAsync;
-    }
-
-    private Task LogAsync(LogMessage log)
-    {
-        _logger.LogInformation(log.Message);
-        return Task.CompletedTask;
-    }
-
-    private async Task HandleReady()
-    {
-        await _client.SetActivityAsync(new Game($"BIC-FHTW | {_settings.Prefix}"));
     }
 
     private async Task HandleCommandAsync(SocketMessage message)
@@ -85,28 +64,5 @@ internal class CommandHandler
 
         if (!result.IsSuccess && result.Error != CommandError.UnknownCommand && !string.IsNullOrWhiteSpace(result.ErrorReason))
             await context.Channel.SendMessageAsync(result.ErrorReason);
-    }
-    
-    private async Task HandleReactionAddedAsync(Cacheable<IUserMessage, ulong> message, Cacheable<IMessageChannel, ulong> cacheable, SocketReaction reaction)
-    {
-        if (reaction.User.Value.IsBot)
-            return;
-
-        switch (reaction.Emote.Name)
-        {
-            case "\ud83d\udccc":    // 📌
-                await message.GetOrDownloadAsync().Result.AddReactionAsync(PushpinEmoji);
-                await message.GetOrDownloadAsync().Result.PinAsync();
-                break;
-            case "\u26d4":          // ⛔
-                if (!_settings.OwnerId.Equals(reaction.User.Value.Id))
-                {
-                    return;
-                }
-                await message.GetOrDownloadAsync().Result.RemoveAllReactionsForEmoteAsync(PushpinEmoji);
-                await message.GetOrDownloadAsync().Result.RemoveAllReactionsForEmoteAsync(NoEntryEmoji);
-                await message.GetOrDownloadAsync().Result.UnpinAsync();
-                break;
-        }
     }
 }

@@ -2,17 +2,16 @@
 using System.Threading.Tasks;
 using BIC_FHTW.Shared;
 
-namespace BIC_FHTW.WebClient.Services.Core
+namespace BIC_FHTW.WebClient.Services.Core;
+
+public interface IRoleApi
 {
-    public interface IRoleApi
-    {
-        Task<IEnumerable<RoleDTO>> GetDiscordRolesAsync(ulong guildId);
-        Task<IEnumerable<RoleDTO>> GetUserDiscordRolesAsync(ulong guildId, ulong userId);
-        Task<IEnumerable<ulong>> GetRequestableRoleIdsAsync(ulong guildId);
-        Task GiveRoleAsync(ulong guildId, ulong roleId);
-        Task TakeRoleAsync(ulong guildId, ulong roleId);
-        Task SetRequestableAsync(ulong guildId, ulong roleId);
-        Task UnsetRequestableAsync(ulong guildId, ulong roleId);
-        Task<IEnumerable<GuildWithRolesDTO>> GetUserGuildsWithRequestableRoles(ulong userID);
-    }
+    Task<IEnumerable<RoleDTO>> GetDiscordRolesAsync(ulong guildId);
+    Task<IEnumerable<RoleDTO>> GetUserDiscordRolesAsync(ulong guildId, ulong userId);
+    Task<IEnumerable<ulong>> GetRequestableRoleIdsAsync(ulong guildId);
+    Task GiveRoleAsync(ulong guildId, ulong roleId);
+    Task TakeRoleAsync(ulong guildId, ulong roleId);
+    Task SetRequestableAsync(ulong guildId, ulong roleId);
+    Task UnsetRequestableAsync(ulong guildId, ulong roleId);
+    Task<IEnumerable<GuildWithRolesDTO>> GetUserGuildsWithRequestableRoles(ulong userID);
 }

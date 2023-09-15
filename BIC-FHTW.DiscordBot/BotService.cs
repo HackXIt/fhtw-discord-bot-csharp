@@ -2,8 +2,11 @@
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
+using BIC_FHTW.DiscordBot.Handler;
+using BIC_FHTW.Scraper.Services;
 using Discord;
 using Discord.Commands;
+using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,27 +17,38 @@ namespace BIC_FHTW.DiscordBot;
 public class BotService : BackgroundService
 {
     private readonly IServiceProvider _provider;
+    private readonly ILogger<BotService> _logger;
+    private readonly IScraperService _scraperService;
     private readonly DiscordSocketClient _client;
     private readonly CommandService _commands;
+    private readonly InteractionService _interactions;
     private readonly BotSettings _settings;
-    private readonly ILogger<BotService> _logger;
-    private readonly CommandHandler _handler;
+    private readonly InteractionHandler _interactionHandler;
+    private readonly CommandHandler _commandHandler;
+    private readonly ReactionHandler _reactionHandler;
 
     private IServiceScope? _scope;
 
     public BotService(IServiceProvider? provider,
+                      ILogger<BotService> logger,   
+                      IScraperService? scraperService,
                    DiscordSocketClient? client,
                    CommandService? commands,
-                   BotSettings? botConfig,
-                   ILogger<BotService> logger)
+                   InteractionService? interactions,
+                   BotSettings? botConfig
+                   )
     {
         _provider = provider ?? throw new ArgumentNullException(nameof(provider));
+        _logger = logger;
+        _scraperService = scraperService ?? throw new ArgumentNullException(nameof(scraperService));
         _client = client ?? throw new ArgumentNullException(nameof(client));
         _commands = commands ?? throw new ArgumentNullException(nameof(commands));
+        _interactions = interactions ?? throw new ArgumentNullException(nameof(interactions));
         _settings = botConfig ?? throw new ArgumentNullException(nameof(botConfig));
-        _logger = logger;
 
-        _handler = new CommandHandler(_client, _commands, _settings, _logger);
+        _commandHandler = new CommandHandler(_client, _commands, _settings, _logger);
+        _interactionHandler = new InteractionHandler(_client, _interactions, _settings, _logger);
+        _reactionHandler = new ReactionHandler(_client, _settings, _logger);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -49,7 +63,9 @@ public class BotService : BackgroundService
         {
             _scope = _provider.CreateScope();
 
-            _handler.Initialize(_scope);
+            _commandHandler.Initialize(_scope);
+            _interactionHandler.Initialize(_scope);
+            _reactionHandler.Initialize(_scope);
 
             await _commands.AddModulesAsync(typeof(BotService).Assembly, _scope.ServiceProvider);
 
@@ -101,6 +117,7 @@ public class BotService : BackgroundService
         _client.Dispose();
         _scope?.Dispose();
         ((IDisposable)_commands).Dispose();
+        ((IDisposable)_interactions).Dispose();
 
         base.Dispose();
     }

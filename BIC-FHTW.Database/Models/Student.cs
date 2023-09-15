@@ -1,15 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Net.Mail;
 
 namespace BIC_FHTW.Database.Models;
 
 public class Student
 {
-    [Key]
-    public string EmailString { get; set; } // Primary key
     // ReSharper disable once InconsistentNaming
-    public string UID => Email.User;
+    [Key]
+    public string UID { get; set; } // Primary key
     public string StudentYear => $"{CourseOfStudyShortname}{Year}";
     [Required]
     public string CourseOfStudyShortname { get; set; } // z.B.: BIC
@@ -28,25 +25,18 @@ public class Student
     
     [Required]
     public int Group { get; set; } // Gruppe
-
-    [NotMapped]
-    public MailAddress Email
-    {
-        get => new(EmailString);
-        set => EmailString = value.ToString();
-    }
     
     public DiscordUser? DiscordUser { get; set; } // Navigation Property
     
     // Constructor that sets all properties
-    public Student(string courseOfStudyShortname, string courseOfStudy, int year, int semester, char association, int group, string emailString)
+    public Student(string uID, string courseOfStudyShortname, string courseOfStudy, int year, int semester, char association, int group)
     {
+        UID = uID;
         CourseOfStudyShortname = courseOfStudyShortname;
         CourseOfStudy = courseOfStudy;
         Year = year;
         Semester = semester;
         Association = association;
         Group = group;
-        EmailString = emailString;
     }
 }

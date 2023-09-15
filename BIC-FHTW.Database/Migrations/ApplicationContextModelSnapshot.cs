@@ -22,6 +22,10 @@ namespace BIC_FHTW.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("ActivationMail")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("ActivationToken")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -29,7 +33,7 @@ namespace BIC_FHTW.Database.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("StudentMail")
+                    b.Property<string>("StudentUid")
                         .HasColumnType("TEXT");
 
                     b.HasKey("DiscordUserId");
@@ -37,7 +41,7 @@ namespace BIC_FHTW.Database.Migrations
                     b.HasIndex("DiscordUserId")
                         .IsUnique();
 
-                    b.HasIndex("StudentMail")
+                    b.HasIndex("StudentUid")
                         .IsUnique();
 
                     b.ToTable("Users");
@@ -79,7 +83,7 @@ namespace BIC_FHTW.Database.Migrations
 
             modelBuilder.Entity("BIC_FHTW.Database.Models.Student", b =>
                 {
-                    b.Property<string>("EmailString")
+                    b.Property<string>("UID")
                         .HasColumnType("TEXT");
 
                     b.Property<char>("Association")
@@ -102,9 +106,9 @@ namespace BIC_FHTW.Database.Migrations
                     b.Property<int>("Year")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("EmailString");
+                    b.HasKey("UID");
 
-                    b.HasIndex("EmailString")
+                    b.HasIndex("UID")
                         .IsUnique();
 
                     b.ToTable("Students");
@@ -114,7 +118,7 @@ namespace BIC_FHTW.Database.Migrations
                 {
                     b.HasOne("BIC_FHTW.Database.Models.Student", "Student")
                         .WithOne("DiscordUser")
-                        .HasForeignKey("BIC_FHTW.Database.Models.DiscordUser", "StudentMail");
+                        .HasForeignKey("BIC_FHTW.Database.Models.DiscordUser", "StudentUid");
 
                     b.Navigation("Student");
                 });

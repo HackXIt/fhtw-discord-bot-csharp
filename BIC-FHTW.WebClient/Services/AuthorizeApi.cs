@@ -5,32 +5,31 @@ using System.Threading.Tasks;
 using BIC_FHTW.Shared;
 using BIC_FHTW.WebClient.Services.Core;
 
-namespace BIC_FHTW.WebClient.Services
+namespace BIC_FHTW.WebClient.Services;
+
+public class AuthorizeApi : IAuthorizeApi
 {
-    public class AuthorizeApi : IAuthorizeApi
+    private readonly HttpClient _httpClient;
+
+    public AuthorizeApi(HttpClient httpClient)
     {
-        private readonly HttpClient _httpClient;
+        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    }
 
-        public AuthorizeApi(HttpClient httpClient)
-        {
-            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-        }
+    public async Task<DiscordUserDTO> GetUserInfo() =>
+        await _httpClient.GetFromJsonAsync<DiscordUserDTO>("api/bic-fhtw/authentication/userinfo");
 
-        public async Task<UserInfoDTO> GetUserInfo() =>
-            await _httpClient.GetFromJsonAsync<UserInfoDTO>("api/bic-fhtw/authentication/userinfo");
+    public async Task Login()
+    {
+        var result = await _httpClient.GetAsync("api/bic-fhtw/authentication/login");
+        if (result.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            throw new Exception(await result.Content.ReadAsStringAsync());
+        result.EnsureSuccessStatusCode();
+    }
 
-        public async Task Login()
-        {
-            var result = await _httpClient.GetAsync("api/bic-fhtw/authentication/login");
-            if (result.StatusCode == System.Net.HttpStatusCode.BadRequest)
-                throw new Exception(await result.Content.ReadAsStringAsync());
-            result.EnsureSuccessStatusCode();
-        }
-
-        public async Task Logout()
-        {
-            var result = await _httpClient.PostAsync("api/bic-fhtw/Authorize/Logout", null);
-            result.EnsureSuccessStatusCode();
-        }
+    public async Task Logout()
+    {
+        var result = await _httpClient.PostAsync("api/bic-fhtw/Authorize/Logout", null);
+        result.EnsureSuccessStatusCode();
     }
 }

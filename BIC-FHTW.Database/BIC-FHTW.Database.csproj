@@ -19,6 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\BIC-FHTW.Scraper\BIC-FHTW.Scraper.csproj" />
       <ProjectReference Include="..\BIC-FHTW.Shared\BIC-FHTW.Shared.csproj" />
     </ItemGroup>
 

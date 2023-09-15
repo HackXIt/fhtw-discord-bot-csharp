@@ -1,23 +1,30 @@
 ﻿using System;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Security.Claims;
-using System.Text.Json;
 using System.Threading.Tasks;
 using AspNetCoreRateLimit;
 using BIC_FHTW.Database.DatabaseContexts;
 using BIC_FHTW.Database.Services;
 using BIC_FHTW.DiscordBot;
+using BIC_FHTW.DiscordBot.Middleware;
 using BIC_FHTW.DiscordBot.Services;
+using BIC_FHTW.Scraper;
+using BIC_FHTW.Scraper.Services;
 using BIC_FHTW.Shared;
+using BIC_FHTW.ThirdParty;
 // using BIC_FHTW.WebApp.Services;
 using Discord;
 using Discord.Commands;
+using Discord.Interactions;
 using Discord.WebSocket;
-using Microsoft.AspNetCore.Authentication;
+using MailKit.Security;
+using MailKitSimplified.Sender;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -43,31 +50,73 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         var botSettings = Configuration.GetSection(nameof(BotSettings)).Get<BotSettings>();
+        var appUrl = Environment.GetEnvironmentVariable("ASPNETCORE_URLS")?.Split(";").First();
+        if(appUrl != null)
+        {
+            botSettings.WebApiUrl = appUrl;
+            botSettings.RegistrationSubUrl = "api/bic-fhtw/registration/complete-registration";
+        }
+        var scraperSettings = Configuration.GetSection(nameof(ScraperSettings)).Get<ScraperSettings>();
         var authenticationSettings = Configuration.GetSection(nameof(AuthenticationSettings)).Get<AuthenticationSettings>();
+        var mailSettings = Configuration.GetSection(nameof(MailSettings)).Get<MailSettings>();
         var connectionString = Configuration.GetConnectionString("ConnectionString");
         if (string.IsNullOrEmpty(connectionString))
         {
             throw new ArgumentException("Connection string cannot be empty or null");
         }
 
+        // Add settings to DI
         services.AddSingleton(botSettings);
+        services.AddSingleton(scraperSettings);
+        services.AddSingleton(mailSettings);
+
+        services.AddSingleton(ScraperUtilities.CreateHttpClient(scraperSettings));
 
         services.AddSingleton(BotUtilities.CreateDicordWebsocketClient(botSettings));
         services.AddSingleton<IDiscordClient>(provider => provider.GetRequiredService<DiscordSocketClient>());
 
         services.AddSingleton(BotUtilities.CreateCommandService(botSettings));
-        //services.AddHostedService<BotService>();
-        services.AddHostedService(provider => 
+        services.AddSingleton<InteractionService>(provider =>
         {
             var discordSocketClient = provider.GetRequiredService<DiscordSocketClient>();
-            var commandService = provider.GetRequiredService<CommandService>();
-            var botSettings = provider.GetRequiredService<BotSettings>();
-            var logger = provider.GetRequiredService<ILogger<BotService>>();
-
-            // Explicitly provide other arguments here, if any
-            return new BotService(provider, discordSocketClient, commandService, botSettings, logger);
+            return BotUtilities.CreateInteractionService(discordSocketClient, botSettings);
         });
+        services.AddSingleton<IScraperService>(provider =>
+        {
+            var logger = provider.GetRequiredService<ILogger<ScraperService>>();
+            var client = provider.GetRequiredService<HttpClient>();
+            return ScraperUtilities.CreateScraperService(provider, logger, client, scraperSettings);
+        });
+        services.AddHostedService(provider => 
+        {
+            var logger = provider.GetRequiredService<ILogger<BotService>>();
+            var scraperService = provider.GetRequiredService<IScraperService>();
+            var discordSocketClient = provider.GetRequiredService<DiscordSocketClient>();
+            var commandService = provider.GetRequiredService<CommandService>();
+            var interactionService = provider.GetRequiredService<InteractionService>();
+            
+            // Explicitly provide other arguments here, if any
+            return new BotService(provider, logger, scraperService, discordSocketClient, commandService, interactionService, botSettings);
+        });
+        
+        // Simplified Mailkit setup for MailService
+        services.AddScopedMailKitSimplifiedEmailSender(Configuration);
+        // Overwrite default options of Simplified Mailkit
+        services.AddMailKitSimplifiedEmailSender(options =>
+        {
+            if (mailSettings != null)
+            {
+                options.SmtpCredential = new NetworkCredential(mailSettings.Account, mailSettings.Password);
+                options.SmtpHost = mailSettings.Host;
+                options.SmtpPort = (ushort)mailSettings.Port;
+            }
 
+            options.SocketOptions = SecureSocketOptions.StartTls;
+            options.ProtocolLog = "console";
+            options.CreateProtocolLogger();
+        });
+        
+        // Database
         services.AddDbContext<ApplicationContext>(options =>
         {
             options.UseSqlite(connectionString, b => b.MigrationsAssembly("BIC-FHTW.Database"))
@@ -75,14 +124,17 @@ public class Startup
                 .EnableSensitiveDataLogging() // Enable sensitive data logging
                 .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole())); // Add logging
         });
-        
         MigrateDatabase(connectionString);
-
         services.AddScoped<UserRepositoryManager>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<RequestableRoleManager>();
         services.AddScoped<IRoleService, RoleService>();
 
+        // Interaction middleware for DI
+        services.AddSingleton<IInteractionMiddleware, RegisterMiddleware>();
+        services.AddSingleton<IInteractionMiddleware, DebugMiddleware>();
+        
+        // TODO Still need to call BotUtilities.CreateInteractionService to initialize the interaction service
 
         services.AddAuthentication(options =>
             {
@@ -139,43 +191,24 @@ public class Startup
         services.AddRazorPages();
     }
     
-    /*
-            .AddOAuth("Discord",
-                options =>
-                {
-                    options.AuthorizationEndpoint = "https://discord.com/oauth2/authorize";
-                    options.Scope.Add("identify");
-                    options.CallbackPath = new PathString("/auth/oauth2Callback");
-                    options.ClientId = authenticationSettings.Discord.ClientId;
-                    options.ClientSecret = authenticationSettings.Discord.ClientSecret;
-                    options.TokenEndpoint = "https://discord.com/api/oauth2/token";
-                    options.UserInformationEndpoint = "https://discord.com/api/users/@me";
-                    options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
-                    options.ClaimActions.MapJsonKey(ClaimTypes.Name, "username");
-                    // For nested json objects, use MapJsonSubKey
-                    //options.ClaimActions.MapJsonSubKey("...", "someObject", "id");
-                    options.AccessDeniedPath = "/Home/DiscordAuthFailed";
-                    options.Events = new OAuthEvents
-                    {
-                        OnCreatingTicket = async context =>
-                        {
-                            var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
-                            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", context.AccessToken);
-                            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                            var response = await context.Backchannel.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, context.HttpContext.RequestAborted);
-                            response.EnsureSuccessStatusCode();
-
-                            var user = JsonDocument.Parse(await response.Content.ReadAsStringAsync()).RootElement;
-                            context.RunClaimActions(user);
-                        }
-                    };
-            })
-            */
-
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+        // This should be the first middleware
+        app.UseExceptionHandler(errorApp =>
+        {
+            errorApp.Run(async context =>
+            {
+                context.Response.StatusCode = 500; // or whatever status code you want to return
+                var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+                var exception = exceptionHandlerPathFeature?.Error; // This will get the exception
+
+                // Log the exception or do something with it here
+                // This is a good place to set a breakpoint to see what the exception is
+                await context.Response.WriteAsync("A server error occurred."); // You can customize this message
+            });
+        });
+        
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
@@ -225,40 +258,3 @@ public class Startup
         context.Database.Migrate();
     }
 }
-/*
-public void ConfigureServices(IServiceCollection services)
-{
-    services.AddSingleton<DatabaseService>();
-    services.AddSingleton<DiscordBot.DiscordBot>();
-    services.AddMailKit(config =>
-    {
-        config.UseMailKit(new MailKitOptions
-        {
-            Server = "smtp.example.com",
-            Port = 587,
-            SenderName = "your-email@example.com",
-            SenderEmail = "your-email@example.com",
-            Account = "your-email@example.com",
-            Password = "your-email-password",
-            Security = true
-        });
-    });
-    
-    services.AddControllers();
-}
-
-public static IHostBuilder CreateHostBuilder(string[] args)
-{
-    return Host.CreateDefaultBuilder(args)
-        .ConfigureWebHostDefaults(webBuilder =>
-        {
-            webBuilder.UseStartup<Startup>();
-        })
-        .ConfigureLogging(logging =>
-        {
-            logging.ClearProviders();
-            logging.SetMinimumLevel(LogLevel.Trace);
-        })
-        .UseNLog();
-}
-*/

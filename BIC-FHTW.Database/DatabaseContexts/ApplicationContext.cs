@@ -30,14 +30,14 @@ public class ApplicationContext : DbContext
             .IsUnique();
 
         modelBuilder.Entity<Student>()
-            .HasIndex(u => u.EmailString)
+            .HasIndex(u => u.UID)
             .IsUnique();
         
         modelBuilder.Entity<DiscordUser>()
             .HasOne(d => d.Student)
             .WithOne(s => s.DiscordUser)
-            .HasForeignKey<DiscordUser>(d => d.StudentMail)
-            .HasPrincipalKey<Student>(s => s.EmailString);
+            .HasForeignKey<DiscordUser>(d => d.StudentUid)
+            .HasPrincipalKey<Student>(s => s.UID);
         
         modelBuilder.Entity<DiscordUserRole>()
             .HasKey(dur => new { dur.DiscordUserId, dur.RoleId });

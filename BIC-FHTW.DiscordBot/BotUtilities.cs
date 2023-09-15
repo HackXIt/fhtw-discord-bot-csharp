@@ -1,11 +1,14 @@
 ﻿using System;
 using Discord;
 using Discord.Commands;
+using Discord.Interactions;
 using Discord.WebSocket;
+using CommandRunMode = Discord.Commands.RunMode;
+using InteractionRunMode = Discord.Interactions.RunMode;
 
 namespace BIC_FHTW.DiscordBot;
 
-public class BotUtilities
+public static class BotUtilities
 {
     public static DiscordSocketClient CreateDicordWebsocketClient(BotSettings botSettings)
     {
@@ -29,14 +32,28 @@ public class BotUtilities
     {
         return new CommandService(new CommandServiceConfig
         {
-            DefaultRunMode = RunMode.Async,
+            DefaultRunMode = CommandRunMode.Async,
             CaseSensitiveCommands = botSettings.CaseSensitiveComands,
             SeparatorChar = ' ',
 
 #if DEBUG
             LogLevel = LogSeverity.Debug
 #else
-                LogLevel = LogSeverity.Warning
+            LogLevel = LogSeverity.Warning
+#endif
+        });
+    }
+
+    public static InteractionService CreateInteractionService(DiscordSocketClient client, BotSettings botSettings)
+    {
+        return new InteractionService(client, new InteractionServiceConfig()
+        {
+            DefaultRunMode = InteractionRunMode.Async,
+            EnableAutocompleteHandlers = botSettings.AutocompleteHandlers,
+#if DEBUG
+            LogLevel = LogSeverity.Debug
+#else
+            LogLevel = LogSeverity.Warning
 #endif
         });
     }

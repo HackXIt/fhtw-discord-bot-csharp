@@ -1,9 +1,8 @@
-﻿namespace BIC_FHTW.Shared
+﻿namespace BIC_FHTW.Shared;
+
+public class TagMetaDataDTO
 {
-    public class TagMetaDataDTO
-    {
-        public string TagName { get; set; }
-        public int SubscriberCount { get; set; }
-        public int BlacklisterCount { get; set; }
-    }
+    public string TagName { get; set; }
+    public int SubscriberCount { get; set; }
+    public int BlacklisterCount { get; set; }
 }

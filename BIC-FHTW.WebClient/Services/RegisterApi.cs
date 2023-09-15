@@ -14,8 +14,10 @@ public class RegisterApi : IRegisterApi
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
     }
 
-    public Task Register(string mailAddress)
+
+    public async Task Register(string token)
     {
-        throw new NotImplementedException();
+        var result = await _httpClient.PostAsync($"api/bic-fhtw/register/complete-registration?token={token}", null);
+        result.EnsureSuccessStatusCode();
     }
 }

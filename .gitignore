@@ -3,5 +3,6 @@
 bin
 obj
 *.db
+*.db*
 appsettings.*json
 DevGPT_docs/
