@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using BIC_FHTW.DiscordBot.Attributes;
 using BIC_FHTW.DiscordBot.Services;
 using Discord;
 using Discord.WebSocket;
@@ -10,6 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BIC_FHTW.DiscordBot.Middleware;
 
+[IsBotOwner]
 public class DebugMiddleware : IInteractionMiddleware
 {
     private readonly IServiceProvider _serviceProvider;
@@ -23,19 +26,35 @@ public class DebugMiddleware : IInteractionMiddleware
         _botSettings = _serviceProvider.GetRequiredService<BotSettings>();
     }
 
-    public string CommandName => "debugMe";
+    public string CommandName => "debug";
     public string Description => "Debugging command";
     public List<SlashCommandOptionBuilder> Options => new();
     
     public async Task<bool> ExecuteCmdAsync(SocketSlashCommand command)
     {
         using var scope = _serviceProvider.CreateScope();
+        _logger.LogDebug("Debug command called...");
+        try
+        {
+            return await DebugRoutine(scope);
+        }
+        catch (Exception ex)
+        {
+            await command.RespondAsync($"Command failed: {ex.Message}");
+            return false;
+        }
+    }
+
+    private async Task<bool> DebugRoutine(IServiceScope scope)
+    {
+        /*
         var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
         using var httpClient = new HttpClient();
-        _logger.LogDebug("Debug command called...");
         var owner = await userService.GetUserByDiscordIdAsync(_botSettings.OwnerId);
-        var result = await httpClient.PostAsync($"api/bic-fhtw/register/complete-registration?token={owner.Token}", null);
+        var result = await httpClient.PostAsync($"api/bic-fhtw/register/complete-registration?token={UrlEncoder.Default.Encode(owner.Token)}", null);
         _logger.LogDebug("Received result: {result}", result);
         return result.IsSuccessStatusCode;
+        */
+        return true;
     }
 }

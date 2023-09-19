@@ -6,5 +6,5 @@ public class DiscordUserRole
     public DiscordUser DiscordUser { get; set; }
 
     public ulong RoleId { get; set; }
-    public RequestableRole RequestableRole { get; set; }
+    public DiscordServerRole DiscordServerRole { get; set; }
 }

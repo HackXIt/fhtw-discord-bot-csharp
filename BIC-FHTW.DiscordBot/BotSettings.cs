@@ -15,4 +15,5 @@ public class BotSettings
     public string RegistrationSubUrl { get; set; } = "api/registration";
     public string BotName { get; set; } = "BIC-FHTW";
     public string BotMail { get; set; } = "no-reply@bic-fhtw.com";
+    public ulong GuildId { get; set; }
 }

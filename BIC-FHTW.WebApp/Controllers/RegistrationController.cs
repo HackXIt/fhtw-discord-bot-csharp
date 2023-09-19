@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BIC_FHTW.Scraper.Scrapers.Userprofile;
 using BIC_FHTW.Scraper.Services;
 using BIC_FHTW.Shared;
+using BIC_FHTW.Shared.Services;
 using Microsoft.Extensions.Logging;
 
 namespace BIC_FHTW.WebApp.Controllers;
@@ -16,12 +17,14 @@ public class RegistrationController : ControllerBase
     private readonly IUserService _userService;
     private readonly IScraperService _scraperService;
     private readonly ILogger<RegistrationController> _logger;
+    private readonly EventService _eventService;
 
-    public RegistrationController(IUserService userService, IScraperService scraperService, ILogger<RegistrationController> logger)
+    public RegistrationController(IUserService userService, IScraperService scraperService, ILogger<RegistrationController> logger, EventService eventService)
     {
         _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _scraperService = scraperService ?? throw new ArgumentNullException(nameof(scraperService));
+        _eventService = eventService ?? throw new ArgumentNullException(nameof(eventService));
     }
 
     [HttpGet("register")]
@@ -49,15 +52,40 @@ public class RegistrationController : ControllerBase
     
     private async Task<bool> CompleteRegistration(DiscordUserDTO user)
     {
-        var scrape = await _scraperService.Scrape(new UserprofileScrapeArguments(user.MailUsername));
-        if (scrape is not { Success: true, UserprofileScrapeResult: not null }) return false;
-        if (string.Compare(user.MailUsername, scrape.UserprofileScrapeResult.Username, StringComparison.Ordinal) != 0)
+        try
         {
-            _logger.LogInformation("Scraped username does not match user!");
+            var scrape = await _scraperService.Scrape(new UserprofileScrapeArguments(user.MailUsername));
+            if (scrape is not { Success: true, UserprofileScrapeResult: not null }) return false;
+            if (string.Compare(user.MailUsername, scrape.UserprofileScrapeResult.Username, StringComparison.Ordinal) != 0)
+            {
+                _logger.LogInformation("Scraped username does not match user!");
+                return false;
+            }
+            var activatedUser =
+                await _userService.ActivateUserWithStudentInformation(user.UserId, scrape.UserprofileScrapeResult);
+            if (activatedUser == null)
+            {
+                _logger.LogInformation("User activation failed!");
+                return false;
+            }
+
+            var student = await _userService.GetStudentByDiscordIdAsync(activatedUser.UserId);
+            if (student == null)
+            {
+                _logger.LogInformation("Newly activated student not found!");
+                return false;
+            }
+
+            // Notify about the completed registration.
+            _eventService.RaiseStudentRegistered(student, activatedUser.UserId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Error during completion of registration: {}", ex.Message);
             return false;
         }
-
-        await _userService.ActivateUserWithStudentInformation(user.UserId, scrape.UserprofileScrapeResult);
+        
+        
         return true;
     }
 }

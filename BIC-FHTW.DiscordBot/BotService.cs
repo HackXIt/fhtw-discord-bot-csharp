@@ -23,6 +23,7 @@ public class BotService : BackgroundService
     private readonly CommandService _commands;
     private readonly InteractionService _interactions;
     private readonly BotSettings _settings;
+    private readonly BotHandler _botHandler;
     private readonly InteractionHandler _interactionHandler;
     private readonly CommandHandler _commandHandler;
     private readonly ReactionHandler _reactionHandler;
@@ -46,6 +47,7 @@ public class BotService : BackgroundService
         _interactions = interactions ?? throw new ArgumentNullException(nameof(interactions));
         _settings = botConfig ?? throw new ArgumentNullException(nameof(botConfig));
 
+        _botHandler = new BotHandler(_client, _settings, _logger);
         _commandHandler = new CommandHandler(_client, _commands, _settings, _logger);
         _interactionHandler = new InteractionHandler(_client, _interactions, _settings, _logger);
         _reactionHandler = new ReactionHandler(_client, _settings, _logger);
@@ -62,7 +64,8 @@ public class BotService : BackgroundService
         try
         {
             _scope = _provider.CreateScope();
-
+            
+            _botHandler.Initialize(_scope);
             _commandHandler.Initialize(_scope);
             _interactionHandler.Initialize(_scope);
             _reactionHandler.Initialize(_scope);

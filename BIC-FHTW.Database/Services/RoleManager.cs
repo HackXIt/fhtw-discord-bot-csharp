@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BIC_FHTW.Database.Services;
 
-public class RequestableRoleManager
+public class RoleManager
 {
     private readonly ApplicationContext _context;
 
-    public RequestableRoleManager(ApplicationContext context)
+    public RoleManager(ApplicationContext context)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
@@ -21,7 +21,7 @@ public class RequestableRoleManager
         if (await _context.RequestableRoles.AnyAsync(r => r.RoleId == roleId))
             return false;
 
-        _context.RequestableRoles.Add(new Models.RequestableRole
+        _context.RequestableRoles.Add(new Models.DiscordServerRole
         {
             RoleId = roleId,
             GuildId = guildId,

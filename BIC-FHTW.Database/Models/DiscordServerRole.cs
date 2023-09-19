@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BIC_FHTW.Database.Models;
 
-public class RequestableRole
+public class DiscordServerRole
 {
     [Key]
     public ulong RoleId { get; set; }

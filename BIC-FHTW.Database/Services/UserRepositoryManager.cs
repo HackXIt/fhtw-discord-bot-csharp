@@ -44,10 +44,18 @@ public class UserRepositoryManager
         {
             return await ResetUserWithNewStudentAsync(discordUser, newStudentData);
         }
+        
+        // Check for existing Student with the same UID and remove
+        var existingStudent = await _context.Students.FindAsync(newStudentData.UID);
+        if (existingStudent != null)
+        {
+            _context.Students.Remove(existingStudent);
+        }
 
         // Link the provided Student object to the DiscordUser
         discordUser.Student = newStudentData;
         discordUser.StudentUid = newStudentData.UID;
+        newStudentData.DiscordUser = discordUser;
 
         // Set DiscordUser status to Active
         discordUser.Status = DiscordUser.UserStatus.Active;
@@ -143,6 +151,7 @@ public class UserRepositoryManager
         // Link the provided Student object to the DiscordUser
         discordUser.Student = newStudentData;
         discordUser.StudentUid = newStudentData.UID;
+        newStudentData.DiscordUser = discordUser;
 
         // Set DiscordUser status to Active
         discordUser.Status = DiscordUser.UserStatus.Active;

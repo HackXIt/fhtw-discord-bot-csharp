@@ -32,4 +32,6 @@ public interface IRoleService
         RoleAlreadyRequestable,
         RoleNotRequestable
     }
+
+    Task<Result> AddRoleAsync(ulong newRoleId, ulong guildId, string newRoleName);
 }

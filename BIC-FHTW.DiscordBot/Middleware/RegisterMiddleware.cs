@@ -14,24 +14,15 @@ using Microsoft.Extensions.Logging;
 
 namespace BIC_FHTW.DiscordBot.Middleware;
 
-public class RegisterMiddleware : IInteractionMiddleware
+public class RegisterMiddleware : InteractionMiddlewareBase
 {
     private const int TokenLength = 32;
     private const string MailAddressOptionName = "email_address";
-    private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<BotService> _logger;
-    private readonly BotSettings _botSettings;
-    
-    public RegisterMiddleware(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-        _logger = _serviceProvider.GetRequiredService<ILogger<BotService>>();
-        _botSettings = _serviceProvider.GetRequiredService<BotSettings>();
-    }
+    public RegisterMiddleware(IServiceProvider serviceProvider) : base(serviceProvider) { }
 
-    public string CommandName => "register";
-    public string Description => "Registers a student on the server";
-    public List<SlashCommandOptionBuilder> Options => new()
+    public override string CommandName => "register";
+    public override string Description => "Registers a student on the server";
+    public override List<SlashCommandOptionBuilder> Options => new()
     {
         new SlashCommandOptionBuilder()
             .WithName(MailAddressOptionName)
@@ -42,78 +33,57 @@ public class RegisterMiddleware : IInteractionMiddleware
     
     // Any methods required by IMiddleware
 
-    public async Task<bool> ExecuteCmdAsync(SocketSlashCommand command)
+    public override async Task<bool> ExecuteCmdAsync(SocketSlashCommand command)
     {
-        using var scope = _serviceProvider.CreateScope();
-        try
+        using var scope = ServiceProvider.CreateScope();
+        var roleService = scope.ServiceProvider.GetRequiredService<IRoleService>();
+        var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+        var scraperService = scope.ServiceProvider.GetRequiredService<IScraperService>();
+        var mailService = scope.ServiceProvider.GetRequiredService<IEmailWriter>();
+        Logger.LogDebug("ExecuteCmdAsync called...");
+        
+        var providedOptions = RetrieveOptions(command.Data.Options);
+        // use services scoped to the command
+        if (!IsValidEmail(providedOptions[MailAddressOptionName] as string))
         {
-            var roleService = scope.ServiceProvider.GetRequiredService<IRoleService>();
-            var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
-            var scraperService = scope.ServiceProvider.GetRequiredService<IScraperService>();
-            var mailService = scope.ServiceProvider.GetRequiredService<IEmailWriter>();
-            _logger.LogDebug("ExecuteCmdAsync called...");
-
-            var providedOptions = RetrieveOptions(command.Data.Options);
-            // use services scoped to the command
-            if (!IsValidEmail(providedOptions[MailAddressOptionName] as string))
-            {
-                await command.FollowupAsync($"Invalid email address. Only email addresses from domain {_botSettings.ValidMailDomain} are allowed.", ephemeral:true);
-                return false;
-            }
-
-            var email = providedOptions[MailAddressOptionName] as string ?? throw new InvalidOperationException();
-            var token = GenerateSecureToken(TokenLength);
-            var user = await userService.AddUserAsync(command.User.Id, token, email);
-            var registrationUrl = $"{_botSettings.WebApiUrl}/api/bic-fhtw/registration/complete-registration?token={UrlEncoder.Default.Encode(token)}";
-            var mailSuccessful = await mailService.To(command.User.Username, email)
-                .From(_botSettings.BotName, _botSettings.BotMail)
-                .Subject("BIC-FHTW Discord Server Registration")
-                .BodyHtml($"Please click the following link to complete your registration: <a href=\"{registrationUrl}\">{registrationUrl}</a>")
-                .TrySendAsync();
-            if (mailSuccessful)
-            {
-                _logger.LogInformation("Mail sent to {email} with registration link {registrationUrl}", email, registrationUrl);
-            }
-            else
-            {
-                _logger.LogError("Mail could not be sent to {email} with registration link {registrationUrl}", email, registrationUrl);
-                await command.FollowupAsync("Sending you an email failed for some reasons. Ask @Administration for clarification and please try again later.", ephemeral:true);
-                return false;
-            }
-            await command.FollowupAsync("User registered. Please check your email inbox for a verification link.", ephemeral:true);
-            return true;
-            /* Some debugging code to check the API call directly
-            using var httpClient = new HttpClient();
-            _logger.LogDebug("Debugging...");
-            var result = await httpClient.PostAsync($"{registrationUrl}", null);
-            _logger.LogDebug("Received result: {result}", result);
-            return result.IsSuccessStatusCode;
-            */
+            await command.FollowupAsync($"Invalid email address. Only email addresses from domain {BotSettings.ValidMailDomain} are allowed.", ephemeral:true);
+            return false;
+            
         }
-        catch (Exception ex)
+        
+        var email = providedOptions[MailAddressOptionName] as string ?? throw new InvalidOperationException();
+        var token = GenerateSecureToken(TokenLength);
+        var user = await userService.AddUserAsync(command.User.Id, token, email);
+        var registrationUrl = $"{BotSettings.WebApiUrl}/api/bic-fhtw/registration/complete-registration?token={UrlEncoder.Default.Encode(token)}";
+        var mailSuccessful = await mailService.To(command.User.Username, email)
+            .From(BotSettings.BotName, BotSettings.BotMail)
+            .Subject("BIC-FHTW Discord Server Registration")
+            .BodyHtml("Welcome to the Server!" +
+                      "<br><br>Please click the following link to complete your registration:"+
+                      $"<br><a href=\"{registrationUrl}\">{registrationUrl}</a>" +
+                      $"<br><br>If there are any problems during registration, please do not hesitate contacting the server administration on discord or responding to this email.<br><br>" +
+                      $"<br><br>Kind regards,<br>{BotSettings.BotName}")
+            .TrySendAsync();
+        if (mailSuccessful)
         {
-            _logger.LogError(ex, "Error during /{} command execution", CommandName);
-            await command.FollowupAsync("An unexpected error occured. Please try again later.", ephemeral:true);
+            Logger.LogInformation("Mail sent to {email} with registration link {registrationUrl}", email, registrationUrl);
+            
         }
-        return false;
-    }
-    
-    private Dictionary<string, object> RetrieveOptions(IEnumerable<SocketSlashCommandDataOption> options)
-    {
-        var providedOptions = new Dictionary<string, object>();
-        foreach (var option in options)
+        else
         {
-            if (option.Type == ApplicationCommandOptionType.SubCommand)
-            {
-                providedOptions = RetrieveOptions(option.Options);
-            }
-            else
-            {
-                providedOptions.Add(option.Name, option.Value);
-            }
+            Logger.LogError("Mail could not be sent to {email} with registration link {registrationUrl}", email, registrationUrl);
+            await command.FollowupAsync("Sending you an email failed for some reasons. Ask @Administration for clarification and please try again later.", ephemeral:true);
+            return false;
         }
-
-        return providedOptions;
+        await command.FollowupAsync("User registered. Please check your inbox for a verification link. (It can take up to 15 minutes to receive the email)", ephemeral:true);
+        return true;
+        /* Some debugging code to check the API call directly
+        using var httpClient = new HttpClient();
+        _logger.LogDebug("Debugging...");
+        var result = await httpClient.PostAsync($"{registrationUrl}", null);
+        _logger.LogDebug("Received result: {result}", result);
+        return result.IsSuccessStatusCode;
+        */
     }
     
     private bool IsValidEmail(string? email)
@@ -122,7 +92,7 @@ public class RegisterMiddleware : IInteractionMiddleware
             return false;
         var splitMail = email.Split('@');
         return Regex.IsMatch(splitMail[0], @"^[\w\.]+$", RegexOptions.IgnoreCase)
-            && Regex.IsMatch(splitMail[1], Regex.Escape(_botSettings.ValidMailDomain), RegexOptions.IgnoreCase);
+            && Regex.IsMatch(splitMail[1], Regex.Escape(BotSettings.ValidMailDomain), RegexOptions.IgnoreCase);
     }
     
     // Generating a secure token can be done outside the registration command (e.g. in the registration controller)
@@ -137,7 +107,7 @@ public class RegisterMiddleware : IInteractionMiddleware
 
         var randomNumber = new byte[length];
         randomNumberGenerator.GetBytes(randomNumber);
-        _logger.LogDebug("Generated token: {token}", randomNumber);
+        Logger.LogDebug("Generated token: {token}", randomNumber);
         return Convert.ToBase64String(randomNumber);
     }
 }

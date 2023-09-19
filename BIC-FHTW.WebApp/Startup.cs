@@ -13,6 +13,7 @@ using BIC_FHTW.DiscordBot.Services;
 using BIC_FHTW.Scraper;
 using BIC_FHTW.Scraper.Services;
 using BIC_FHTW.Shared;
+using BIC_FHTW.Shared.Services;
 using BIC_FHTW.ThirdParty;
 // using BIC_FHTW.WebApp.Services;
 using Discord;
@@ -50,6 +51,8 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         var botSettings = Configuration.GetSection(nameof(BotSettings)).Get<BotSettings>();
+        if(botSettings == null)
+            throw new ArgumentNullException(nameof(botSettings), "settings cannot be null");
         var appUrl = Environment.GetEnvironmentVariable("ASPNETCORE_URLS")?.Split(";").First();
         if(appUrl != null)
         {
@@ -57,8 +60,14 @@ public class Startup
             botSettings.RegistrationSubUrl = "api/bic-fhtw/registration/complete-registration";
         }
         var scraperSettings = Configuration.GetSection(nameof(ScraperSettings)).Get<ScraperSettings>();
+        if(scraperSettings == null)
+            throw new ArgumentNullException(nameof(scraperSettings), "settings cannot be null");
         var authenticationSettings = Configuration.GetSection(nameof(AuthenticationSettings)).Get<AuthenticationSettings>();
+        if(authenticationSettings == null)
+            throw new ArgumentNullException(nameof(authenticationSettings), "settings cannot be null");
         var mailSettings = Configuration.GetSection(nameof(MailSettings)).Get<MailSettings>();
+        if(mailSettings == null)
+            throw new ArgumentNullException(nameof(mailSettings), "settings cannot be null");
         var connectionString = Configuration.GetConnectionString("ConnectionString");
         if (string.IsNullOrEmpty(connectionString))
         {
@@ -70,6 +79,8 @@ public class Startup
         services.AddSingleton(scraperSettings);
         services.AddSingleton(mailSettings);
 
+        // Add services to DI
+        services.AddSingleton<EventService>();
         services.AddSingleton(ScraperUtilities.CreateHttpClient(scraperSettings));
 
         services.AddSingleton(BotUtilities.CreateDicordWebsocketClient(botSettings));
@@ -104,13 +115,9 @@ public class Startup
         // Overwrite default options of Simplified Mailkit
         services.AddMailKitSimplifiedEmailSender(options =>
         {
-            if (mailSettings != null)
-            {
-                options.SmtpCredential = new NetworkCredential(mailSettings.Account, mailSettings.Password);
-                options.SmtpHost = mailSettings.Host;
-                options.SmtpPort = (ushort)mailSettings.Port;
-            }
-
+            options.SmtpCredential = new NetworkCredential(mailSettings.Account, mailSettings.AppPassword);
+            options.SmtpHost = mailSettings.Host;
+            options.SmtpPort = (ushort)mailSettings.Port;
             options.SocketOptions = SecureSocketOptions.StartTls;
             options.ProtocolLog = "console";
             options.CreateProtocolLogger();
@@ -127,15 +134,14 @@ public class Startup
         MigrateDatabase(connectionString);
         services.AddScoped<UserRepositoryManager>();
         services.AddScoped<IUserService, UserService>();
-        services.AddScoped<RequestableRoleManager>();
+        services.AddScoped<RoleManager>();
         services.AddScoped<IRoleService, RoleService>();
 
         // Interaction middleware for DI
         services.AddSingleton<IInteractionMiddleware, RegisterMiddleware>();
         services.AddSingleton<IInteractionMiddleware, DebugMiddleware>();
         
-        // TODO Still need to call BotUtilities.CreateInteractionService to initialize the interaction service
-
+        // Discord Authentication mechanisms for the web client
         services.AddAuthentication(options =>
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;

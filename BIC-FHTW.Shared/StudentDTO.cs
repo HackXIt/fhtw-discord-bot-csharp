@@ -1,7 +1,11 @@
-﻿namespace BIC_FHTW.Shared;
+﻿// ReSharper disable InconsistentNaming
+namespace BIC_FHTW.Shared;
 
 public class StudentDTO
 {
-    // ReSharper disable once InconsistentNaming
     public string UID { get; set; } = string.Empty;
+    public string StudentYear { get; set; } = string.Empty;
+    public int Semester { get; set; }
+    public char Association { get; set; }
+    public int Group { get; set; }
 }

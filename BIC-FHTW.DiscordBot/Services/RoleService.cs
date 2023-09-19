@@ -12,12 +12,12 @@ namespace BIC_FHTW.DiscordBot.Services;
 public class RoleService : IRoleService
 {
     private readonly DiscordSocketClient _client;
-    private readonly RequestableRoleManager _requestableRoleManager;
+    private readonly RoleManager _roleManager;
 
-    public RoleService(DiscordSocketClient client, RequestableRoleManager roleManager)
+    public RoleService(DiscordSocketClient client, RoleManager roleManager)
     {
         _client = client ?? throw new ArgumentNullException(nameof(client));
-        _requestableRoleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
+        _roleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
     }
 
     public Task<IEnumerable<RoleDTO>> GetDiscordRolesAsync(ulong guildId)
@@ -34,11 +34,11 @@ public class RoleService : IRoleService
     }
 
     public Task<ulong[]> GetRequestableRoleIdsAsync(ulong guildId) =>
-        _requestableRoleManager.GetRequestableRoleIdsAsync(guildId);
+        _roleManager.GetRequestableRoleIdsAsync(guildId);
 
     public async Task<IEnumerable<RoleDTO>> GetRequestableRolesAsync(ulong guildId)
     {
-        var requestableIds = await _requestableRoleManager.GetRequestableRoleIdsAsync(guildId);
+        var requestableIds = await _roleManager.GetRequestableRoleIdsAsync(guildId);
         var guild = _client.GetGuild(guildId);
 
         List<RoleDTO> roles = new List<RoleDTO>();
@@ -76,9 +76,16 @@ public class RoleService : IRoleService
         }));
     }
 
+    public async Task<IRoleService.Result> AddRoleAsync(ulong newRoleId, ulong guildId, string newRoleName)
+    {
+        return await _roleManager.AddRoleAsync(newRoleId, guildId, newRoleName) 
+            ? IRoleService.Result.RoleNotFound 
+            : IRoleService.Result.Success;
+    }
+
     public async Task<IRoleService.Result> GiveRoleToUserAsync(IGuildUser user, IRole role)
     {
-        if (!await _requestableRoleManager.IsRoleRequestableAsync(role.Id))
+        if (!await _roleManager.IsRoleRequestableAsync(role.Id))
             return IRoleService.Result.RoleNotAllowed;
 
         if (user.RoleIds.Contains(role.Id))
@@ -100,7 +107,7 @@ public class RoleService : IRoleService
         if (role == null)
             return IRoleService.Result.RoleNotFound;
 
-        if (!await _requestableRoleManager.IsRoleRequestableAsync(roleId))
+        if (!await _roleManager.IsRoleRequestableAsync(roleId))
             return IRoleService.Result.RoleNotAllowed;
 
         if (user.Roles.Any(r => r.Id == roleId))
@@ -112,7 +119,7 @@ public class RoleService : IRoleService
 
     public async Task<IRoleService.Result> SetRoleRequestableAsync(IRole role)
     {
-        if (await _requestableRoleManager.AddRoleAsync(role.Id, role.Guild.Id, role.Name))
+        if (await _roleManager.AddRoleAsync(role.Id, role.Guild.Id, role.Name))
             return IRoleService.Result.Success;
 
         return IRoleService.Result.RoleAlreadyRequestable;
@@ -127,7 +134,7 @@ public class RoleService : IRoleService
         if (role == null)
             return IRoleService.Result.RoleNotFound;
 
-        if (await _requestableRoleManager.AddRoleAsync(roleId, guildId, role.Name))
+        if (await _roleManager.AddRoleAsync(roleId, guildId, role.Name))
             return IRoleService.Result.Success;
 
         return IRoleService.Result.RoleAlreadyRequestable;
@@ -135,7 +142,7 @@ public class RoleService : IRoleService
 
     public async Task<IRoleService.Result> TakeRoleFromUserAsync(IGuildUser user, IRole role)
     {
-        if (!await _requestableRoleManager.IsRoleRequestableAsync(role.Id))
+        if (!await _roleManager.IsRoleRequestableAsync(role.Id))
             return IRoleService.Result.RoleNotAllowed;
 
         if (!user.RoleIds.Contains(role.Id))
@@ -157,7 +164,7 @@ public class RoleService : IRoleService
         if (role == null)
             return IRoleService.Result.RoleNotFound;
 
-        if (!await _requestableRoleManager.IsRoleRequestableAsync(roleId))
+        if (!await _roleManager.IsRoleRequestableAsync(roleId))
             return IRoleService.Result.RoleNotAllowed;
 
         if (!user.Roles.Any(r => r.Id == roleId))
@@ -169,7 +176,7 @@ public class RoleService : IRoleService
 
     public async Task<IRoleService.Result> UnsetRoleRequestableAsync(IRole role)
     {
-        if (await _requestableRoleManager.RemoveRoleAsync(role.Id))
+        if (await _roleManager.RemoveRoleAsync(role.Id))
             return IRoleService.Result.Success;
 
         return IRoleService.Result.RoleNotRequestable;
@@ -177,7 +184,7 @@ public class RoleService : IRoleService
 
     public async Task<IRoleService.Result> UnsetRoleRequestableAsync(ulong roleId)
     {
-        if (await _requestableRoleManager.RemoveRoleAsync(roleId))
+        if (await _roleManager.RemoveRoleAsync(roleId))
             return IRoleService.Result.Success;
 
         return IRoleService.Result.RoleNotRequestable;

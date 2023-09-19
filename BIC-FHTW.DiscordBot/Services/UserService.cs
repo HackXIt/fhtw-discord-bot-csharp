@@ -10,12 +10,10 @@ namespace BIC_FHTW.DiscordBot.Services;
 
 public class UserService : IUserService
 {
-    private readonly DiscordSocketClient _client;
     private readonly UserRepositoryManager _userRepositoryManager;
 
-    public UserService(DiscordSocketClient client, UserRepositoryManager userRepositoryManager)
+    public UserService(UserRepositoryManager userRepositoryManager)
     {
-        _client = client ?? throw new ArgumentNullException(nameof(client));
         _userRepositoryManager = userRepositoryManager ?? throw new ArgumentNullException(nameof(userRepositoryManager));
     }
 
@@ -47,11 +45,12 @@ public class UserService : IUserService
         UserprofileScrapeResult scrapeResult)
     {
         var student = EntityFactory.ConvertFromUserprofileScrapeResult(scrapeResult);
+        DiscordUserDTO? userDto = null;
         if (student != null)
         {
-            EntityFactory.ConvertFromDiscordUser(await _userRepositoryManager.AddStudentAndActivateUserAsync(discordUserId, student));
+            userDto = EntityFactory.ConvertFromDiscordUser(await _userRepositoryManager.AddStudentAndActivateUserAsync(discordUserId, student));
         }
 
-        return null;
+        return userDto;
     }
 }

@@ -15,7 +15,7 @@ public class ApplicationContext : DbContext
     
     public DbSet<DiscordUser> Users { get; set; }
     public DbSet<Student> Students { get; set; }
-    public DbSet<RequestableRole> RequestableRoles { get; set; }
+    public DbSet<DiscordServerRole> RequestableRoles { get; set; }
     public DbSet<DiscordUserRole> DiscordUserRoles { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -48,7 +48,7 @@ public class ApplicationContext : DbContext
             .HasForeignKey(dur => dur.DiscordUserId);
 
         modelBuilder.Entity<DiscordUserRole>()
-            .HasOne(dur => dur.RequestableRole)
+            .HasOne(dur => dur.DiscordServerRole)
             .WithMany(rr => rr.DiscordUserRoles)
             .HasForeignKey(dur => dur.RoleId);
     }
