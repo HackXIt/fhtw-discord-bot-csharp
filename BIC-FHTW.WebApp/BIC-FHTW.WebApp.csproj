@@ -16,6 +16,9 @@
     <ItemGroup>
         <Compile Remove="Bot\**" />
         <Content Remove="Bot\**" />
+        <Content Include="..\Dockerfile">
+          <Link>Dockerfile</Link>
+        </Content>
         <EmbeddedResource Remove="Bot\**" />
         <None Remove="Bot\**" />
     </ItemGroup>
