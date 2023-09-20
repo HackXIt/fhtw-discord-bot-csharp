@@ -128,7 +128,9 @@ public class Startup
         {
             options.UseSqlite(connectionString, b => b.MigrationsAssembly("BIC-FHTW.Database"))
                 .EnableDetailedErrors() // Enable detailed errors
+#if DEBUG
                 .EnableSensitiveDataLogging() // Enable sensitive data logging
+#endif
                 .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole())); // Add logging
         });
         MigrateDatabase(connectionString);
@@ -257,8 +259,10 @@ public class Startup
         var builder = new DbContextOptionsBuilder<ApplicationContext>();
         builder.UseSqlite(connectionString, b => b.MigrationsAssembly("BIC-FHTW.Database"))
             .EnableDetailedErrors() // Enable detailed errors
+#if DEBUG
             .EnableSensitiveDataLogging() // Enable sensitive data logging
-            .UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole())); // Add logging;
+#endif
+            .UseLoggerFactory(LoggerFactory.Create(loggingBuilder => loggingBuilder.AddConsole())); // Add logging;
 
         using var context = new ApplicationContext(builder.Options);
         context.Database.Migrate();
