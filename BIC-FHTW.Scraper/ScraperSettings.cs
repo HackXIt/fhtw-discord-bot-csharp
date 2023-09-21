@@ -4,8 +4,8 @@ namespace BIC_FHTW.Scraper;
 
 public class ScraperSettings
 {
-    public string Username { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
+    public string Username { get; set; } = Environment.GetEnvironmentVariable("SCRAPER_USERNAME") ?? string.Empty;
+    public string Password { get; set; } = Environment.GetEnvironmentVariable("SCRAPER_PASSWORD") ?? string.Empty;
     public string BaseUrl { get; set; } = string.Empty;
     public string MainUrl => BaseUrl + MainPageRelativeUrl;
     public string MainPageRelativeUrl { get; set; } = string.Empty;

@@ -16,8 +16,12 @@ class Program
         Host.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration(config =>
             {
+#if !DEBUG
                 config.AddJsonFile("appsettings.json", false, true);
-                config.AddJsonFile("appsettings.Development.json", true, true);
+#endif
+#if DEBUG
+                config.AddJsonFile("appsettings.Development.json", false, true);
+#endif    
                 config.AddEnvironmentVariables();
             })
             .ConfigureLogging(logging =>

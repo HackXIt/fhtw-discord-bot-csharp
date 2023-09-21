@@ -1,9 +1,11 @@
-﻿namespace BIC_FHTW.DiscordBot;
+﻿using System;
+
+namespace BIC_FHTW.DiscordBot;
 
 public class BotSettings
 {
-    public ulong OwnerId { get; set; }
-    public string BotToken { get; set; } = string.Empty;
+    public ulong OwnerId { get; set; } = Convert.ToUInt64(Environment.GetEnvironmentVariable("BOTSETTINGS_OWNERID"));
+    public string BotToken { get; set; } = Environment.GetEnvironmentVariable("BOTSETTINGS_TOKEN") ?? string.Empty;
     public string Prefix { get; set; } = "bic!";
     public int MessageCacheSize { get; set; }
     public bool AlwaysDownloadUsers { get; set; }
@@ -14,6 +16,6 @@ public class BotSettings
     public string WebApiUrl { get; set; } = string.Empty;
     public string RegistrationSubUrl { get; set; } = "api/registration";
     public string BotName { get; set; } = "BIC-FHTW";
-    public string BotMail { get; set; } = "no-reply@bic-fhtw.com";
-    public ulong GuildId { get; set; }
+    public string BotMail { get; set; } = Environment.GetEnvironmentVariable("BOTSETTING_BOTMAIL") ?? string.Empty;
+    public ulong GuildId { get; set; } = Convert.ToUInt64(Environment.GetEnvironmentVariable("BOTSETTINGS_GUILDID"));
 }

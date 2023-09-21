@@ -155,8 +155,14 @@ public class Startup
             })
             .AddDiscord(options =>
             {
+#if !DEBUG
+                options.ClientId = Environment.GetEnvironmentVariable("DISCORD_CLIENTSECRET") ?? string.Empty;
+                options.ClientSecret = Environment.GetEnvironmentVariable("DISCORD_CLIENTSECRET") ?? string.Empty;
+#endif
+#if DEBUG
                 options.ClientId = authenticationSettings.Discord.ClientId;
                 options.ClientSecret = authenticationSettings.Discord.ClientSecret;
+#endif
 
                 options.Events = new OAuthEvents
                 {
