@@ -155,7 +155,7 @@ public class Startup
             })
             .AddDiscord(options =>
             {
-#if !DEBUG
+#if RELEASE
                 options.ClientId = Environment.GetEnvironmentVariable("DISCORD_CLIENTSECRET") ?? string.Empty;
                 options.ClientSecret = Environment.GetEnvironmentVariable("DISCORD_CLIENTSECRET") ?? string.Empty;
 #endif

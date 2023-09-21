@@ -16,7 +16,7 @@ class Program
         Host.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration(config =>
             {
-#if !DEBUG
+#if RELEASE
                 config.AddJsonFile("appsettings.json", false, true);
 #endif
 #if DEBUG
