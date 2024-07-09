@@ -4,7 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>disable</ImplicitUsings>
-        <RootNamespace>BIC_FHTW.WebApp</RootNamespace>
+        <RootNamespace>FHTW.WebApp</RootNamespace>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
@@ -47,10 +47,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BIC-FHTW.Database\BIC-FHTW.Database.csproj" />
-      <ProjectReference Include="..\BIC-FHTW.DiscordBot\BIC-FHTW.DiscordBot.csproj" />
-      <ProjectReference Include="..\BIC-FHTW.Shared\BIC-FHTW.Shared.csproj" />
-      <ProjectReference Include="..\BIC-FHTW.WebClient\BIC-FHTW.WebClient.csproj" />
+      <ProjectReference Include="..\FHTW.Database\FHTW.Database.csproj" />
+      <ProjectReference Include="..\FHTW.DiscordBot\FHTW.DiscordBot.csproj" />
+      <ProjectReference Include="..\FHTW.Shared\FHTW.Shared.csproj" />
+      <ProjectReference Include="..\FHTW.WebClient\FHTW.WebClient.csproj" />
     </ItemGroup>
 
 

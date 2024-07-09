@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
-        <RootNamespace>BIC_FHTW.Shared</RootNamespace>
+        <RootNamespace>FHTW.Shared</RootNamespace>
         <ImplicitUsings>disabled</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>

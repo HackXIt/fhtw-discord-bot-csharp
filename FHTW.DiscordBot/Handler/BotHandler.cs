@@ -77,9 +77,10 @@ public class BotHandler : IHandler
             return;
         }
 
-        var roles = await roleService.GetDiscordRolesAsync(guild.Id);
-        var roleExists = roles.FirstOrDefault(role => role.RoleName == eventArgs.Student.StudentYear);
-        if (roleExists == null)
+        var roles = (await roleService.GetDiscordRolesAsync(guild.Id)).ToList();
+        var studentRole = roles.FirstOrDefault(role => role.RoleName == "BIC-Student");
+        var existingStudentRole = roles.FirstOrDefault(role => role.RoleName == eventArgs.Student.StudentYear);
+        if (existingStudentRole == null)
         {
             var newRole = await guild.CreateRoleAsync(eventArgs.Student.StudentYear, GuildPermissions.None, Color.LightOrange, true, true);
             await roleService.AddRoleAsync(newRole.Id, guild.Id, newRole.Name);
@@ -87,10 +88,18 @@ public class BotHandler : IHandler
         }
         else
         {
-            var existingRole = guild.GetRole(roleExists.RoleId);
+            var existingRole = guild.GetRole(existingStudentRole.RoleId);
             await user.AddRoleAsync(existingRole);
         }
 
+        if (studentRole != null)
+        {
+            await user.AddRoleAsync(studentRole.RoleId);
+        }
+        else
+        {
+            _logger.LogWarning("General Student role not found!");
+        }
         await user.SendMessageAsync(
             $"User activation successful. New role {eventArgs.Student.StudentYear} has been assigned.");
     }

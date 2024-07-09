@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-        <RootNamespace>BIC_FHTW.Database</RootNamespace>
+        <RootNamespace>FHTW.Database</RootNamespace>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
@@ -23,8 +23,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BIC-FHTW.Scraper\BIC-FHTW.Scraper.csproj" />
-      <ProjectReference Include="..\BIC-FHTW.Shared\BIC-FHTW.Shared.csproj" />
+      <ProjectReference Include="..\FHTW.Scraper\FHTW.Scraper.csproj" />
+      <ProjectReference Include="..\FHTW.Shared\FHTW.Shared.csproj" />
     </ItemGroup>
 
 </Project>

@@ -126,7 +126,7 @@ public class Startup
         // Database
         services.AddDbContext<ApplicationContext>(options =>
         {
-            options.UseSqlite(connectionString, b => b.MigrationsAssembly("BIC-FHTW.Database"))
+            options.UseSqlite(connectionString, b => b.MigrationsAssembly("FHTW.Database"))
                 .EnableDetailedErrors() // Enable detailed errors
 #if DEBUG
                 .EnableSensitiveDataLogging() // Enable sensitive data logging
@@ -155,15 +155,16 @@ public class Startup
             })
             .AddDiscord(options =>
             {
-#if RELEASE
-                options.ClientId = Environment.GetEnvironmentVariable("DISCORD_CLIENTSECRET") ?? string.Empty;
-                options.ClientSecret = Environment.GetEnvironmentVariable("DISCORD_CLIENTSECRET") ?? string.Empty;
-#endif
-#if DEBUG
-                options.ClientId = authenticationSettings.Discord.ClientId;
-                options.ClientSecret = authenticationSettings.Discord.ClientSecret;
-#endif
-
+                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").Equals("Development"))
+                {
+                    options.ClientId = authenticationSettings.Discord.ClientId;
+                    options.ClientSecret = authenticationSettings.Discord.ClientSecret;
+                }
+                else
+                {
+                    options.ClientId = Environment.GetEnvironmentVariable("DISCORD_CLIENTSECRET") ?? string.Empty;
+                    options.ClientSecret = Environment.GetEnvironmentVariable("DISCORD_CLIENTSECRET") ?? string.Empty;
+                }
                 options.Events = new OAuthEvents
                 {
                     OnCreatingTicket = ticketContext =>
@@ -263,7 +264,7 @@ public class Startup
     private void MigrateDatabase(string connectionString)
     {
         var builder = new DbContextOptionsBuilder<ApplicationContext>();
-        builder.UseSqlite(connectionString, b => b.MigrationsAssembly("BIC-FHTW.Database"))
+        builder.UseSqlite(connectionString, b => b.MigrationsAssembly("FHTW.Database"))
             .EnableDetailedErrors() // Enable detailed errors
 #if DEBUG
             .EnableSensitiveDataLogging() // Enable sensitive data logging

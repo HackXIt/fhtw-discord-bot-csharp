@@ -2,18 +2,13 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-        <RootNamespace>BIC_FHTW.Scraper</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>FHTW.ThirdParty</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="HtmlAgilityPack" Version="1.11.53" />
-      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
-
+      <PackageReference Include="MailKitSimplified.Sender" Version="2.5.5" />
     </ItemGroup>
-
-
-
 
 </Project>

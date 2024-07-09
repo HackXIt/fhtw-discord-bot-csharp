@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-        <RootNamespace>BIC_FHTW.DiscordBot</RootNamespace>
+        <RootNamespace>FHTW.DiscordBot</RootNamespace>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
@@ -21,10 +21,10 @@
 
 
     <ItemGroup>
-      <ProjectReference Include="..\BIC-FHTW.Database\BIC-FHTW.Database.csproj" />
-      <ProjectReference Include="..\BIC-FHTW.Scraper\BIC-FHTW.Scraper.csproj" />
-      <ProjectReference Include="..\BIC-FHTW.Shared\BIC-FHTW.Shared.csproj" />
-      <ProjectReference Include="..\BIC-FHTW.ThirdParty\BIC-FHTW.ThirdParty.csproj" />
+      <ProjectReference Include="..\FHTW.Database\FHTW.Database.csproj" />
+      <ProjectReference Include="..\FHTW.Scraper\FHTW.Scraper.csproj" />
+      <ProjectReference Include="..\FHTW.Shared\FHTW.Shared.csproj" />
+      <ProjectReference Include="..\FHTW.ThirdParty\FHTW.ThirdParty.csproj" />
     </ItemGroup>
 
 

@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -16,12 +17,14 @@ class Program
         Host.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration(config =>
             {
-#if RELEASE
-                config.AddJsonFile("appsettings.json", false, true);
-#endif
-#if DEBUG
-                config.AddJsonFile("appsettings.Development.json", false, true);
-#endif    
+                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").Equals("Development"))
+                {
+                    config.AddJsonFile("appsettings.Development.json", false, true);
+                }
+                else
+                {
+                    config.AddJsonFile("appsettings.json", false, true);
+                }
                 config.AddEnvironmentVariables();
             })
             .ConfigureLogging(logging =>
