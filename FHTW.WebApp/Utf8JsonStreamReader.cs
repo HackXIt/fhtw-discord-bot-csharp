@@ -10,7 +10,7 @@ using System.Buffers;
 using System.IO;
 using System.Text.Json;
 
-namespace BIC_FHTW.WebApp;
+namespace FHTW.WebApp;
 
 // Taken from https://stackoverflow.com/questions/54983533/parsing-a-json-file-with-net-core-3-0-system-text-json
 // and fixed a few bugs with that

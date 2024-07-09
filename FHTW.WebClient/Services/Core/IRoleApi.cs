@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using BIC_FHTW.Shared;
+using FHTW.Shared;
 
-namespace BIC_FHTW.WebClient.Services.Core;
+namespace FHTW.WebClient.Services.Core;
 
 public interface IRoleApi
 {

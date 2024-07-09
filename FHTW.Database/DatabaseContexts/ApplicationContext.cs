@@ -1,7 +1,7 @@
-﻿using BIC_FHTW.Database.Models;
+﻿using FHTW.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace BIC_FHTW.Database.DatabaseContexts;
+namespace FHTW.Database.DatabaseContexts;
 
 public class ApplicationContext : DbContext
 {

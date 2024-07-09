@@ -1,4 +1,4 @@
-﻿namespace BIC_FHTW.Scraper.Scrapers.Userprofile;
+﻿namespace FHTW.Scraper.Scrapers.Userprofile;
 
 public class UserprofileScrapeResult : IScrapeResult
 {

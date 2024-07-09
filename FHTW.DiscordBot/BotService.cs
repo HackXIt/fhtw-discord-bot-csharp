@@ -2,17 +2,17 @@
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
-using BIC_FHTW.DiscordBot.Handler;
-using BIC_FHTW.Scraper.Services;
 using Discord;
 using Discord.Commands;
 using Discord.Interactions;
 using Discord.WebSocket;
+using FHTW.DiscordBot.Handler;
+using FHTW.Scraper.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace BIC_FHTW.DiscordBot;
+namespace FHTW.DiscordBot;
 
 public class BotService : BackgroundService
 {

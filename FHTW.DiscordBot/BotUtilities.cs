@@ -6,7 +6,7 @@ using Discord.WebSocket;
 using CommandRunMode = Discord.Commands.RunMode;
 using InteractionRunMode = Discord.Interactions.RunMode;
 
-namespace BIC_FHTW.DiscordBot;
+namespace FHTW.DiscordBot;
 
 public static class BotUtilities
 {

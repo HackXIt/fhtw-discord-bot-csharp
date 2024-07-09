@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace BIC_FHTW.Scraper;
+namespace FHTW.Scraper;
 
 public class ScraperSettings
 {

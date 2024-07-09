@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using BIC_FHTW.Database.DatabaseContexts;
-using BIC_FHTW.Database.Models;
-using BIC_FHTW.Shared;
+using FHTW.Database.DatabaseContexts;
+using FHTW.Database.Models;
+using FHTW.Shared;
 using Microsoft.EntityFrameworkCore;
 
-namespace BIC_FHTW.Database.Services;
+namespace FHTW.Database.Services;
 
 public class UserRepositoryManager
 {

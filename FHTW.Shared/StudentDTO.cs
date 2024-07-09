@@ -1,5 +1,5 @@
 ﻿// ReSharper disable InconsistentNaming
-namespace BIC_FHTW.Shared;
+namespace FHTW.Shared;
 
 public class StudentDTO
 {

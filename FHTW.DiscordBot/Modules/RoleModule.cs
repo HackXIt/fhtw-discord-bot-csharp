@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
-using BIC_FHTW.DiscordBot.Attributes;
-using BIC_FHTW.DiscordBot.Services;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using FHTW.DiscordBot.Attributes;
+using FHTW.DiscordBot.Services;
 
-namespace BIC_FHTW.DiscordBot.Modules;
+namespace FHTW.DiscordBot.Modules;
 
 [RequireBotPermission(GuildPermission.ManageRoles)]
 public class RoleModule : ModuleBase

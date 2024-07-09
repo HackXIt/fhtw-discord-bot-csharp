@@ -5,21 +5,20 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AspNetCoreRateLimit;
-using BIC_FHTW.Database.DatabaseContexts;
-using BIC_FHTW.Database.Services;
-using BIC_FHTW.DiscordBot;
-using BIC_FHTW.DiscordBot.Middleware;
-using BIC_FHTW.DiscordBot.Services;
-using BIC_FHTW.Scraper;
-using BIC_FHTW.Scraper.Services;
-using BIC_FHTW.Shared;
-using BIC_FHTW.Shared.Services;
-using BIC_FHTW.ThirdParty;
-// using BIC_FHTW.WebApp.Services;
 using Discord;
 using Discord.Commands;
 using Discord.Interactions;
 using Discord.WebSocket;
+using FHTW.Database.DatabaseContexts;
+using FHTW.Database.Services;
+using FHTW.DiscordBot;
+using FHTW.DiscordBot.Middleware;
+using FHTW.DiscordBot.Services;
+using FHTW.Scraper;
+using FHTW.Scraper.Services;
+using FHTW.Shared;
+using FHTW.Shared.Services;
+using FHTW.ThirdParty.Mail;
 using MailKit.Security;
 using MailKitSimplified.Sender;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -34,8 +33,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+// using BIC_FHTW.WebApp.Services;
 
-namespace BIC_FHTW.WebApp;
+namespace FHTW.WebApp;
 
 public class Startup
 {

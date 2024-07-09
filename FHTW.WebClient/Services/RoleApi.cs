@@ -4,10 +4,10 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
-using BIC_FHTW.Shared;
-using BIC_FHTW.WebClient.Services.Core;
+using FHTW.Shared;
+using FHTW.WebClient.Services.Core;
 
-namespace BIC_FHTW.WebClient.Services;
+namespace FHTW.WebClient.Services;
 
 public class RoleApi : IRoleApi
 {

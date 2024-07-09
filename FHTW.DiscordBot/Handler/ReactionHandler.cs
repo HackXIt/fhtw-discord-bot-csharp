@@ -5,7 +5,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace BIC_FHTW.DiscordBot.Handler;
+namespace FHTW.DiscordBot.Handler;
 
 public class ReactionHandler : IHandler
 {

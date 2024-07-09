@@ -1,4 +1,4 @@
-﻿namespace BIC_FHTW.WebApp;
+﻿namespace FHTW.WebApp;
 
 public class AuthenticationSettings
 {

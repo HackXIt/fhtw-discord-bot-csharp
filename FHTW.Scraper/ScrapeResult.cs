@@ -1,10 +1,10 @@
-﻿using BIC_FHTW.Scraper.Scrapers;
-using BIC_FHTW.Scraper.Scrapers.MailGroup;
-using BIC_FHTW.Scraper.Scrapers.MailGroups;
-using BIC_FHTW.Scraper.Scrapers.Query;
-using BIC_FHTW.Scraper.Scrapers.Userprofile;
+﻿using FHTW.Scraper.Scrapers;
+using FHTW.Scraper.Scrapers.MailGroup;
+using FHTW.Scraper.Scrapers.MailGroups;
+using FHTW.Scraper.Scrapers.Query;
+using FHTW.Scraper.Scrapers.Userprofile;
 
-namespace BIC_FHTW.Scraper;
+namespace FHTW.Scraper;
 
 public class ScrapeResult : IScrapeResult
 {

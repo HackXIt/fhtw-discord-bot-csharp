@@ -1,4 +1,4 @@
-﻿namespace BIC_FHTW.Scraper.Scrapers;
+﻿namespace FHTW.Scraper.Scrapers;
 
 public abstract class BaseScrapeArgument : IScrapeArguments
 {

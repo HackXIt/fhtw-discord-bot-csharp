@@ -4,15 +4,15 @@ using System.Security.Cryptography;
 using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using BIC_FHTW.DiscordBot.Services;
-using BIC_FHTW.Scraper.Services;
 using Discord;
 using Discord.WebSocket;
+using FHTW.DiscordBot.Services;
+using FHTW.Scraper.Services;
 using MailKitSimplified.Sender.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace BIC_FHTW.DiscordBot.Middleware;
+namespace FHTW.DiscordBot.Middleware;
 
 public class RegisterMiddleware : InteractionMiddlewareBase
 {

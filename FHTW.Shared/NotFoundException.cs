@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace BIC_FHTW.Shared;
+namespace FHTW.Shared;
 
 public class NotFoundException : Exception
 {

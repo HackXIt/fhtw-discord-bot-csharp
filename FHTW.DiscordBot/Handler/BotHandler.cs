@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using BIC_FHTW.DiscordBot.Services;
-using BIC_FHTW.Shared.Services;
 using Discord;
 using Discord.WebSocket;
+using FHTW.DiscordBot.Services;
+using FHTW.Shared.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace BIC_FHTW.DiscordBot.Handler;
+namespace FHTW.DiscordBot.Handler;
 
 public class BotHandler : IHandler
 {

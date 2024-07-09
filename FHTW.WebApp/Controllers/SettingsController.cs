@@ -2,14 +2,14 @@
 using System.Buffers;
 using System.IO;
 using System.Text.Json;
-using BIC_FHTW.DiscordBot;
-using BIC_FHTW.Shared;
+using FHTW.DiscordBot;
+using FHTW.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BIC_FHTW.WebApp.Controllers;
+namespace FHTW.WebApp.Controllers;
 
-[Route("api/bic-fhtw/[controller]")]
+[Route("api/fhtw/[controller]")]
 [ApiController]
 [Authorize(Policy = Constants.IsBotOwner)]
 public class SettingsController : ControllerBase

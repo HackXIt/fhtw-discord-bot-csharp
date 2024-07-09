@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net.Mail;
 
-namespace BIC_FHTW.Shared;
+namespace FHTW.Shared;
 
 public class DiscordUserDTO
 {

@@ -1,4 +1,4 @@
-﻿namespace BIC_FHTW.DiscordBot.Middleware;
+﻿namespace FHTW.DiscordBot.Middleware;
 
 public interface IMiddleware
 {

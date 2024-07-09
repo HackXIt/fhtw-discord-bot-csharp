@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using BIC_FHTW.Database.Models;
-using BIC_FHTW.Database.Services;
-using BIC_FHTW.Scraper.Scrapers.Userprofile;
-using BIC_FHTW.Shared;
-using Discord.WebSocket;
+using FHTW.Database.Models;
+using FHTW.Database.Services;
+using FHTW.Scraper.Scrapers.Userprofile;
+using FHTW.Shared;
 
-namespace BIC_FHTW.DiscordBot.Services;
+namespace FHTW.DiscordBot.Services;
 
 public class UserService : IUserService
 {

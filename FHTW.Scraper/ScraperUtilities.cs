@@ -1,7 +1,7 @@
-﻿using BIC_FHTW.Scraper.Services;
+﻿using FHTW.Scraper.Services;
 using Microsoft.Extensions.Logging;
 
-namespace BIC_FHTW.Scraper;
+namespace FHTW.Scraper;
 
 public static class ScraperUtilities
 {

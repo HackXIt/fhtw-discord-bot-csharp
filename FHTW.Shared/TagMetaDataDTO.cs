@@ -1,4 +1,4 @@
-﻿namespace BIC_FHTW.Shared;
+﻿namespace FHTW.Shared;
 
 public class TagMetaDataDTO
 {

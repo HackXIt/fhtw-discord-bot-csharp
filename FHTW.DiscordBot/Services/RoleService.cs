@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BIC_FHTW.Database.Services;
-using BIC_FHTW.Shared;
 using Discord;
 using Discord.WebSocket;
+using FHTW.Database.Services;
+using FHTW.Shared;
 
-namespace BIC_FHTW.DiscordBot.Services;
+namespace FHTW.DiscordBot.Services;
 
 public class RoleService : IRoleService
 {

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BIC_FHTW.DiscordBot.Middleware;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
+using FHTW.DiscordBot.Middleware;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace BIC_FHTW.DiscordBot.Handler;
+namespace FHTW.DiscordBot.Handler;
 
 public class InteractionHandler : IHandler
 {

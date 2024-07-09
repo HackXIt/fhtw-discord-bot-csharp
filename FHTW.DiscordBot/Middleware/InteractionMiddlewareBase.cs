@@ -6,7 +6,7 @@ using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace BIC_FHTW.DiscordBot.Middleware;
+namespace FHTW.DiscordBot.Middleware;
 
 public abstract class InteractionMiddlewareBase : IInteractionMiddleware
 {

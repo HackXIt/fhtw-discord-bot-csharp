@@ -1,14 +1,14 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
 using AspNet.Security.OAuth.Discord;
-using BIC_FHTW.Shared;
+using FHTW.Shared;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BIC_FHTW.WebApp.Controllers;
+namespace FHTW.WebApp.Controllers;
 
-[Route("api/bic-fhtw/[controller]")]
+[Route("api/fhtw/[controller]")]
 [ApiController]
 public class AuthenticationController : ControllerBase
 {

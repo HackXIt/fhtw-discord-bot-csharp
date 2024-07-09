@@ -1,16 +1,16 @@
 using System;
-using BIC_FHTW.DiscordBot.Services;
-using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using BIC_FHTW.Scraper.Scrapers.Userprofile;
-using BIC_FHTW.Scraper.Services;
-using BIC_FHTW.Shared;
-using BIC_FHTW.Shared.Services;
+using FHTW.DiscordBot.Services;
+using FHTW.Scraper.Scrapers.Userprofile;
+using FHTW.Scraper.Services;
+using FHTW.Shared;
+using FHTW.Shared.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace BIC_FHTW.WebApp.Controllers;
+namespace FHTW.WebApp.Controllers;
 
-[Route("api/bic-fhtw/[controller]")]
+[Route("api/fhtw/[controller]")]
 [ApiController]
 public class RegistrationController : ControllerBase
 {

@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using BIC_FHTW.DiscordBot.Attributes;
-using BIC_FHTW.DiscordBot.Services;
 using Discord;
 using Discord.WebSocket;
+using FHTW.DiscordBot.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace BIC_FHTW.DiscordBot.Middleware;
+namespace FHTW.DiscordBot.Middleware;
 
 [IsBotOwner]
 public class DebugMiddleware : IInteractionMiddleware

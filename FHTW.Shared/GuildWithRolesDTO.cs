@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BIC_FHTW.Shared;
+namespace FHTW.Shared;
 
 public class GuildWithRolesDTO
 {

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BIC_FHTW.Database.DatabaseContexts;
+using FHTW.Database.DatabaseContexts;
 using Microsoft.EntityFrameworkCore;
 
-namespace BIC_FHTW.Database.Services;
+namespace FHTW.Database.Services;
 
 public class RoleManager
 {

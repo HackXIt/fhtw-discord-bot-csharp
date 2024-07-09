@@ -1,8 +1,8 @@
 ﻿using System.Net.Mail;
-using BIC_FHTW.Scraper.Scrapers.Userprofile;
-using BIC_FHTW.Shared;
+using FHTW.Scraper.Scrapers.Userprofile;
+using FHTW.Shared;
 
-namespace BIC_FHTW.Database.Models;
+namespace FHTW.Database.Models;
 
 public static class EntityFactory
 {

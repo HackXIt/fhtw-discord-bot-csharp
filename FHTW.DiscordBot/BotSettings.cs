@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BIC_FHTW.DiscordBot;
+namespace FHTW.DiscordBot;
 
 public class BotSettings
 {

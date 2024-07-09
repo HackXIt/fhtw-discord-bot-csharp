@@ -1,5 +1,5 @@
 ﻿@page "/bic-fhtw/profile"
-@using BIC_FHTW.Shared
+@using FHTW.Shared
 @attribute [Authorize]
 
 @inject DiscordAuthenticationStateProvider AuthState
@@ -136,10 +136,10 @@
     List<string> _subscribedTags;
     List<string> _blacklistedTags;
 
-    List<BIC_FHTW.Shared.RoleDTO> _recievedRequestableRoles;
-    List<BIC_FHTW.Shared.RoleDTO> _requestableRoles;
+    List<RoleDTO> _recievedRequestableRoles;
+    List<RoleDTO> _requestableRoles;
 
-    List<BIC_FHTW.Shared.GuildWithRolesDTO> _guilds;
+    List<GuildWithRolesDTO> _guilds;
 
     protected override async Task OnInitializedAsync()
     {
@@ -148,8 +148,8 @@
         var tagFetchTask = TagApi.GetUserTaglistAsync();
         var guildFetchTask = RoleApi.GetUserGuildsWithRequestableRoles(AuthState.UserId);
 
-        var RolesFethTask = RoleApi.GetDiscordRolesAsync(BIC_FHTW.Shared.Constants.RozServerId);
-        var RequestableRoleFetchTask = RoleApi.GetRequestableRoleIdsAsync(BIC_FHTW.Shared.Constants.RozServerId);
+        var RolesFethTask = RoleApi.GetDiscordRolesAsync(Constants.RozServerId);
+        var RequestableRoleFetchTask = RoleApi.GetRequestableRoleIdsAsync(Constants.RozServerId);
 
         StateHasChanged();
 

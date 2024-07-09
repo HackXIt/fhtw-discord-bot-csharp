@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Discord;
 
-namespace BIC_FHTW.DiscordBot.Services;
+namespace FHTW.DiscordBot.Services;
 
 public interface IDirectMessageService
 {

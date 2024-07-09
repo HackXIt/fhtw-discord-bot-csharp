@@ -1,4 +1,4 @@
-﻿namespace BIC_FHTW.Scraper.Scrapers.Query;
+﻿namespace FHTW.Scraper.Scrapers.Query;
 
 public class QueryScrapeArguments : BaseScrapeArgument
 {

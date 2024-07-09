@@ -4,11 +4,11 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using BIC_FHTW.Shared;
-using BIC_FHTW.WebClient.Services.Core;
+using FHTW.Shared;
+using FHTW.WebClient.Services.Core;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace BIC_FHTW.WebClient;
+namespace FHTW.WebClient;
 
 public class DiscordAuthenticationStateProvider : AuthenticationStateProvider
 {

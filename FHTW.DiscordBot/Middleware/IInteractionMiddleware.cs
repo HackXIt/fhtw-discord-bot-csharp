@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 
-namespace BIC_FHTW.DiscordBot.Middleware;
+namespace FHTW.DiscordBot.Middleware;
 
 public interface IInteractionMiddleware : IMiddleware
 {

@@ -1,4 +1,4 @@
-﻿namespace BIC_FHTW.DiscordBot.Handler;
+﻿namespace FHTW.DiscordBot.Handler;
 
 public interface IHandler
 {

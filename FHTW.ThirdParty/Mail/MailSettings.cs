@@ -1,4 +1,4 @@
-﻿namespace BIC_FHTW.ThirdParty;
+﻿namespace FHTW.ThirdParty.Mail;
 
 public class MailSettings
 {

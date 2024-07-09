@@ -1,4 +1,5 @@
-﻿@inject DiscordAuthenticationStateProvider AuthState
+﻿@using FHTW.Shared
+@inject DiscordAuthenticationStateProvider AuthState
 
 <div class="top-row pl-4 navbar navbar-dark">
     <AuthorizeView>
@@ -41,7 +42,7 @@
                 </li>
             </Authorized>
         </AuthorizeView>
-        <AuthorizeView Policy="@BIC_FHTW.Shared.Constants.IsBotOwner">
+        <AuthorizeView Policy="@Constants.IsBotOwner">
             <Authorized>
                 <li class="nav-item px-3">
                     <NavLink class="nav-link" href="bic-fhtw/settings">

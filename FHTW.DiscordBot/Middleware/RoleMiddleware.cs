@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BIC_FHTW.DiscordBot.Services;
 using Discord;
 using Discord.WebSocket;
+using FHTW.DiscordBot.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BIC_FHTW.DiscordBot.Middleware;
+namespace FHTW.DiscordBot.Middleware;
 
 public class RoleMiddleware : InteractionMiddlewareBase
 {

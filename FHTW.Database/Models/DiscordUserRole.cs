@@ -1,4 +1,4 @@
-﻿namespace BIC_FHTW.Database.Models;
+﻿namespace FHTW.Database.Models;
 
 public class DiscordUserRole
 {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using BIC_FHTW.WebClient.Services.Core;
+using FHTW.WebClient.Services.Core;
 
-namespace BIC_FHTW.WebClient.Services;
+namespace FHTW.WebClient.Services;
 
 public class RegisterApi : IRegisterApi
 {

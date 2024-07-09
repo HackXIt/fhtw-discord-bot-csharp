@@ -1,7 +1,6 @@
 ﻿@page "/bic-fhtw/settings"
+@using FHTW.Shared
 @attribute [Authorize(Policy = Constants.IsBotOwner)]
-
-@using BIC_FHTW.Shared
 
 @inject HttpClient Http
 

@@ -1,13 +1,13 @@
 ﻿using System.Text.RegularExpressions;
-using BIC_FHTW.Scraper.Scrapers;
-using BIC_FHTW.Scraper.Scrapers.MailGroup;
-using BIC_FHTW.Scraper.Scrapers.MailGroups;
-using BIC_FHTW.Scraper.Scrapers.Query;
-using BIC_FHTW.Scraper.Scrapers.Userprofile;
+using FHTW.Scraper.Scrapers;
+using FHTW.Scraper.Scrapers.MailGroup;
+using FHTW.Scraper.Scrapers.MailGroups;
+using FHTW.Scraper.Scrapers.Query;
+using FHTW.Scraper.Scrapers.Userprofile;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
 
-namespace BIC_FHTW.Scraper.Services;
+namespace FHTW.Scraper.Services;
 
 public class ScraperService : IScraperService
 {

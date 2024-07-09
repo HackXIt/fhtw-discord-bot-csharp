@@ -1,14 +1,14 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using BIC_FHTW.Shared;
-using BIC_FHTW.WebClient.Services;
-using BIC_FHTW.WebClient.Services.Core;
+using FHTW.Shared;
+using FHTW.WebClient.Services;
+using FHTW.WebClient.Services.Core;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BIC_FHTW.WebClient;
+namespace FHTW.WebClient;
 
 public class Program
 {

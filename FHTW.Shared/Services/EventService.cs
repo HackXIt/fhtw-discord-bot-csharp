@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BIC_FHTW.Shared.Services;
+namespace FHTW.Shared.Services;
 
 public class EventService
 {

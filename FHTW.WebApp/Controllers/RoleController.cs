@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using BIC_FHTW.DiscordBot.Services;
-using BIC_FHTW.Shared;
 using Discord.WebSocket;
+using FHTW.DiscordBot.Services;
+using FHTW.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BIC_FHTW.WebApp.Controllers;
+namespace FHTW.WebApp.Controllers;
 
-[Route("api/bic-fhtw/[controller]")]
+[Route("api/fhtw/[controller]")]
 [ApiController]
 [Authorize]
 public class RoleController : ControllerBase

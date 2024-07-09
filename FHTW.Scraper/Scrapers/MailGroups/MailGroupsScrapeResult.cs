@@ -1,4 +1,4 @@
-﻿namespace BIC_FHTW.Scraper.Scrapers.MailGroups;
+﻿namespace FHTW.Scraper.Scrapers.MailGroups;
 
 public class MailGroupsScrapeResult : IScrapeResult
 {

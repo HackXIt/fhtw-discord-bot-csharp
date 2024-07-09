@@ -1,6 +1,6 @@
-﻿using BIC_FHTW.Scraper.Scrapers;
+﻿using FHTW.Scraper.Scrapers;
 
-namespace BIC_FHTW.Scraper.Services;
+namespace FHTW.Scraper.Services;
 
 public interface IScraperService
 {
