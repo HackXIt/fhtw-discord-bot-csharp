@@ -63,6 +63,16 @@ public class Startup
         var scraperSettings = Configuration.GetSection(nameof(ScraperSettings)).Get<ScraperSettings>();
         if(scraperSettings == null)
             throw new ArgumentNullException(nameof(scraperSettings), "settings cannot be null");
+        var scraperUser = Environment.GetEnvironmentVariable("SCRAPER_USERNAME");
+        if (scraperUser != null)
+        {
+            scraperSettings.Username = scraperUser;
+        }
+        var scraperPassword = Environment.GetEnvironmentVariable("SCRAPER_PASSWORD");
+        if (scraperPassword != null)
+        {
+            scraperSettings.Password = scraperPassword;
+        }
         var authenticationSettings = Configuration.GetSection(nameof(AuthenticationSettings)).Get<AuthenticationSettings>();
         if(authenticationSettings == null)
             throw new ArgumentNullException(nameof(authenticationSettings), "settings cannot be null");
