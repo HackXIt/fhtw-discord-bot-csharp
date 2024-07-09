@@ -18,6 +18,7 @@ public class RegisterMiddleware : InteractionMiddlewareBase
 {
     private const int TokenLength = 32;
     private const string MailAddressOptionName = "email_address";
+    private const string RegistrationCompleteApi = "api/fhtw/registration/complete-registration";
     public RegisterMiddleware(IServiceProvider serviceProvider) : base(serviceProvider) { }
 
     public override string CommandName => "register";
@@ -54,7 +55,7 @@ public class RegisterMiddleware : InteractionMiddlewareBase
         var email = providedOptions[MailAddressOptionName] as string ?? throw new InvalidOperationException();
         var token = GenerateSecureToken(TokenLength);
         var user = await userService.AddUserAsync(command.User.Id, token, email);
-        var registrationUrl = $"{BotSettings.WebApiUrl}/api/bic-fhtw/registration/complete-registration?token={UrlEncoder.Default.Encode(token)}";
+        var registrationUrl = $"{BotSettings.WebApiUrl}/{RegistrationCompleteApi}?token={UrlEncoder.Default.Encode(token)}";
         var mailSuccessful = await mailService.To(command.User.Username, email)
             .From(BotSettings.BotName, BotSettings.BotMail)
             .Subject("BIC-FHTW Discord Server Registration")
@@ -72,10 +73,10 @@ public class RegisterMiddleware : InteractionMiddlewareBase
         else
         {
             Logger.LogError("Mail could not be sent to {email} with registration link {registrationUrl}", email, registrationUrl);
-            await command.FollowupAsync("Sending you an email failed for some reasons. Ask @Administration for clarification and please try again later.", ephemeral:true);
+            await command.FollowupAsync("Sending you an email failed for some reasons. Ask @admins for clarification and please try again later.", ephemeral:true);
             return false;
         }
-        await command.FollowupAsync("User registered. Please check your inbox for a verification link. (It can take up to 15 minutes to receive the email)", ephemeral:true);
+        await command.FollowupAsync("Registration email sent. Please check your inbox for a verification link. (It can take up to 15 minutes to receive the email)", ephemeral:true);
         return true;
         /* Some debugging code to check the API call directly
         using var httpClient = new HttpClient();

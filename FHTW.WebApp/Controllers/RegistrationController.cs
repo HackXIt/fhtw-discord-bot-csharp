@@ -43,8 +43,8 @@ public class RegistrationController : ControllerBase
         {
             _logger.LogInformation("User found with activation token {}", token);
             if(await CompleteRegistration(user))
-                return Ok("User setup successful!");
-            return BadRequest("User setup failed!");
+                return Ok("User setup successful!\nYou can close this tab now.");
+            return BadRequest("User setup failed!\nPlease contact server administration for details.");
         }
         _logger.LogInformation("No user found with activation token {}", token);
         return BadRequest("Provided token is invalid!");

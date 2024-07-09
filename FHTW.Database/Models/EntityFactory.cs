@@ -46,7 +46,7 @@ public static class EntityFactory
                 Gruppe: not -1} 
             ? new Student(
                 scrapeResult.Username, 
-                ("b" + scrapeResult.Username[..2]).ToUpper(), // FIXME some hacky way of creating the shortname
+                ("m" + scrapeResult.Username[..2]).ToUpper(), // FIXME some hacky way of creating the shortname
                 scrapeResult.Studiengang,
                 2000 + int.Parse(scrapeResult.Username[2..4]), // FIXME again a little hacky but it's 01:00 again and this works for now
                 scrapeResult.Semester,
