@@ -28,6 +28,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -155,14 +156,15 @@ public class Startup
             })
             .AddDiscord(options =>
             {
-                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").Equals("Development"))
+                var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
+                if (env.Equals("Development"))
                 {
                     options.ClientId = authenticationSettings.Discord.ClientId;
                     options.ClientSecret = authenticationSettings.Discord.ClientSecret;
                 }
                 else
                 {
-                    options.ClientId = Environment.GetEnvironmentVariable("DISCORD_CLIENTSECRET") ?? string.Empty;
+                    options.ClientId = Environment.GetEnvironmentVariable("DISCORD_CLIENTID") ?? string.Empty;
                     options.ClientSecret = Environment.GetEnvironmentVariable("DISCORD_CLIENTSECRET") ?? string.Empty;
                 }
                 options.Events = new OAuthEvents
@@ -243,7 +245,6 @@ public class Startup
 
         app.UseClientRateLimiting();
         app.UseIpRateLimiting();
-
         app.UseHttpsRedirection();
         app.UseBlazorFrameworkFiles();
         app.UseStaticFiles();
