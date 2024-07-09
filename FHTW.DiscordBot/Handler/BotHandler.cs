@@ -55,7 +55,7 @@ public class BotHandler : IHandler
 
     private async Task HandleReady()
     {
-        await _client.SetActivityAsync(new Game($"BIC-FHTW | Use me with prefix {_settings.Prefix}"));
+        await _client.SetActivityAsync(new Game($"BIC-FHTW | Use me via command prefix {_settings.Prefix}"));
     }
 
     private async void HandleStudentRegistered(object? sender, EventService.StudentRegisteredEventArgs eventArgs)

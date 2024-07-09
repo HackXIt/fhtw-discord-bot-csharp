@@ -6,7 +6,7 @@ public class BotSettings
 {
     public ulong OwnerId { get; set; } = Convert.ToUInt64(Environment.GetEnvironmentVariable("BOTSETTINGS_OWNERID"));
     public string BotToken { get; set; } = Environment.GetEnvironmentVariable("BOTSETTINGS_TOKEN") ?? string.Empty;
-    public string Prefix { get; set; } = "bic!";
+    public string Prefix { get; set; } = "/";
     public int MessageCacheSize { get; set; }
     public bool AlwaysDownloadUsers { get; set; }
     public bool CaseSensitiveComands { get; set; }
