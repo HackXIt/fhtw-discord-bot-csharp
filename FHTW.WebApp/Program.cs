@@ -17,14 +17,11 @@ class Program
         Host.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration(config =>
             {
-                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").Equals("Development"))
-                {
-                    config.AddJsonFile("appsettings.Development.json", false, true);
-                }
-                else
-                {
-                    config.AddJsonFile("appsettings.json", false, true);
-                }
+                var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
+                config.AddJsonFile(
+                    env.Equals("Development")
+                        ? "appsettings.Development.json"
+                        : "appsettings.json", false, true);
                 config.AddEnvironmentVariables();
             })
             .ConfigureLogging(logging =>
