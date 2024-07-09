@@ -9,6 +9,7 @@ on:
     types: [created]
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  MY_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   add-to-project:
@@ -20,8 +21,6 @@ jobs:
         with:
           project: 'https://github.com/users/HackXIt/projects/7'
           column_name: '📋 Backlog'
-        env:
-          MY_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Assign author 
         # You may pin to the exact commit or the version.
         # uses: technote-space/assign-author@314be11408f46898f65485daf142cef4e15453c0
