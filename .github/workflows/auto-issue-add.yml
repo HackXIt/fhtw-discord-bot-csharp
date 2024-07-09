@@ -18,3 +18,9 @@ jobs:
           github-token: ${{ secrets.ADD_TO_PROJECT_PAT }}
           labeled: help wanted, quesetion
           label-operator: NOT
+        # You may pin to the exact commit or the version.
+        # uses: technote-space/assign-author@314be11408f46898f65485daf142cef4e15453c0
+      - uses: technote-space/assign-author@v1.3.1
+        with:
+          # Secret GitHub API token to use for making API requests.
+          GITHUB_TOKEN: ${{ github.token }} # default is ${{ github.token }}
