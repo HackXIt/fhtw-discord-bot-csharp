@@ -36,22 +36,25 @@ public class RegisterMiddleware : InteractionMiddlewareBase
 
     public override async Task<bool> ExecuteCmdAsync(SocketSlashCommand command)
     {
+        await command.FollowupAsync($"Command temporarily deactivated.", ephemeral: true);
+        return true;
+        /*
         using var scope = ServiceProvider.CreateScope();
         var roleService = scope.ServiceProvider.GetRequiredService<IRoleService>();
         var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
         var scraperService = scope.ServiceProvider.GetRequiredService<IScraperService>();
         var mailService = scope.ServiceProvider.GetRequiredService<IEmailWriter>();
         Logger.LogDebug("ExecuteCmdAsync called...");
-        
+
         var providedOptions = RetrieveOptions(command.Data.Options);
         // use services scoped to the command
         if (!IsValidEmail(providedOptions[MailAddressOptionName] as string))
         {
             await command.FollowupAsync($"Invalid email address. Only email addresses from domain {BotSettings.ValidMailDomain} are allowed.", ephemeral:true);
             return false;
-            
+
         }
-        
+
         var email = providedOptions[MailAddressOptionName] as string ?? throw new InvalidOperationException();
         var token = GenerateSecureToken(TokenLength);
         var user = await userService.AddUserAsync(command.User.Id, token, email);
@@ -68,7 +71,7 @@ public class RegisterMiddleware : InteractionMiddlewareBase
         if (mailSuccessful)
         {
             Logger.LogInformation("Mail sent to {email} with registration link {registrationUrl}", email, registrationUrl);
-            
+
         }
         else
         {
@@ -78,6 +81,7 @@ public class RegisterMiddleware : InteractionMiddlewareBase
         }
         await command.FollowupAsync("Registration email sent. Please check your inbox for a verification link. (It can take up to 15 minutes to receive the email)", ephemeral:true);
         return true;
+        */
         /* Some debugging code to check the API call directly
         using var httpClient = new HttpClient();
         _logger.LogDebug("Debugging...");

@@ -79,6 +79,16 @@ public class Startup
         var mailSettings = Configuration.GetSection(nameof(MailSettings)).Get<MailSettings>();
         if(mailSettings == null)
             throw new ArgumentNullException(nameof(mailSettings), "settings cannot be null");
+        var mailAccount = Environment.GetEnvironmentVariable("MAIL_ACCOUNT");
+        if (mailAccount != null)
+        {
+            mailSettings.Account = mailAccount;
+        }
+        var mailPassword = Environment.GetEnvironmentVariable("MAIL_PASSWORD");
+        if (mailPassword != null)
+        {
+            mailSettings.AppPassword = mailPassword;
+        }
         var connectionString = Configuration.GetConnectionString("ConnectionString");
         if (string.IsNullOrEmpty(connectionString))
         {

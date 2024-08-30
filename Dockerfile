@@ -2,8 +2,9 @@
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
-
-FROM mcr.microsoft.com/dotnet/sdk:6.0.414 AS build
+# https://devblogs.microsoft.com/dotnet/improving-multiplatform-container-support/
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:6.0.414 AS build
+ARG TARGETARCH
 WORKDIR /src
 
 # Check network connectivity
@@ -29,10 +30,10 @@ COPY . .
 
 # Build the WebApp project
 WORKDIR "/src/FHTW.WebApp"
-RUN dotnet build "FHTW.WebApp.csproj" -c Release -o /app/build
+RUN dotnet build "FHTW.WebApp.csproj" -c Release -o /app/build -a $TARGETARCH
 
 FROM build AS publish
-RUN dotnet publish "FHTW.WebApp.csproj" -c Release -o /app/publish
+RUN dotnet publish "FHTW.WebApp.csproj" -c Release -o /app/publish -a $TARGETARCH
 
 FROM base AS final
 WORKDIR /app
