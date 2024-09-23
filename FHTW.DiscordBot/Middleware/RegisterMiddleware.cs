@@ -8,6 +8,7 @@ using Discord;
 using Discord.WebSocket;
 using FHTW.DiscordBot.Services;
 using FHTW.Scraper.Services;
+using FHTW.Shared;
 using MailKitSimplified.Sender.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -18,7 +19,7 @@ public class RegisterMiddleware : InteractionMiddlewareBase
 {
     private const int TokenLength = 32;
     private const string MailAddressOptionName = "email_address";
-    private const string RegistrationCompleteApi = "api/fhtw/registration/complete-registration";
+    private const string RegistrationCompleteApi = $"{Constants.botApiPath}/registration/complete-registration";
     public RegisterMiddleware(IServiceProvider serviceProvider) : base(serviceProvider) { }
 
     public override string CommandName => "register";
