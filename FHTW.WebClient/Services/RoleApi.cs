@@ -19,20 +19,20 @@ public class RoleApi : IRoleApi
     }
 
     public Task<IEnumerable<RoleDTO>> GetDiscordRolesAsync(ulong guildId) =>
-        _client.GetFromJsonAsync<IEnumerable<RoleDTO>>($"api/bic-fhtw/guild/{guildId}");
+        _client.GetFromJsonAsync<IEnumerable<RoleDTO>>($"{Constants.botApiPath}/guild/{guildId}");
 
     public Task<IEnumerable<ulong>> GetRequestableRoleIdsAsync(ulong guildId) =>
-        _client.GetFromJsonAsync<IEnumerable<ulong>>($"api/bic-fhtw/requestable/{guildId}");
+        _client.GetFromJsonAsync<IEnumerable<ulong>>($"{Constants.botApiPath}/requestable/{guildId}");
 
     public Task<IEnumerable<GuildWithRolesDTO>> GetUserGuildsWithRequestableRoles(ulong userID) =>
-        _client.GetFromJsonAsync<IEnumerable<GuildWithRolesDTO>>($"api/bic-fhtw/userguilds/{userID}");
+        _client.GetFromJsonAsync<IEnumerable<GuildWithRolesDTO>>($"{Constants.botApiPath}/userguilds/{userID}");
 
     public Task<IEnumerable<RoleDTO>> GetUserDiscordRolesAsync(ulong guildId, ulong userId) =>
-        _client.GetFromJsonAsync<IEnumerable<RoleDTO>>($"api/bic-fhtw/user/{guildId}/{userId}");
+        _client.GetFromJsonAsync<IEnumerable<RoleDTO>>($"{Constants.botApiPath}/user/{guildId}/{userId}");
 
     public async Task GiveRoleAsync(ulong guildId, ulong roleId)
     {
-        var mesage = await _client.PostAsJsonAsync($"api/bic-fhtw/give/", new { guildId, roleId });
+        var mesage = await _client.PostAsJsonAsync($"{Constants.botApiPath}/give/", new { guildId, roleId });
         mesage.EnsureSuccessStatusCode();
     }
 

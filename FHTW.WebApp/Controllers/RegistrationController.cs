@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace FHTW.WebApp.Controllers;
 
-[Route("api/fhtw/[controller]")]
+[Route($"{Constants.botApiPath}/[controller]")]
 [ApiController]
 public class RegistrationController : ControllerBase
 {

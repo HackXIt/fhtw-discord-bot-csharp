@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FHTW.WebApp.Controllers;
 
-[Route("api/fhtw/[controller]")]
+[Route($"{Constants.botApiPath}/[controller]")]
 [ApiController]
 [Authorize]
 public class RoleController : ControllerBase

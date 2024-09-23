@@ -9,6 +9,7 @@ namespace FHTW.WebClient.Services;
 
 public class TagApi : ITagApi
 {
+    public const string ApiSubPath = "tags";
     private readonly HttpClient _client;
 
     public TagApi(HttpClient client)
@@ -17,21 +18,21 @@ public class TagApi : ITagApi
     }
 
     public async Task<TagMetaDataDTO[]> GetTagMetaDataAsync() =>
-        await _client.GetFromJsonAsync<TagMetaDataDTO[]>("api/bic-fhtw/tags");
+        await _client.GetFromJsonAsync<TagMetaDataDTO[]>($"{Constants.botApiPath}/{ApiSubPath}");
 
     public async Task<UserTagListDTO> GetUserTaglistAsync() =>
-        await _client.GetFromJsonAsync<UserTagListDTO>("api/bic-fhtw/tags/userlist");
+        await _client.GetFromJsonAsync<UserTagListDTO>($"{Constants.botApiPath}/{ApiSubPath}/userlist");
 
     public async Task SubscribeAsync(string[] tags) =>
-        await _client.PostAsJsonAsync("api/bic-fhtw/tags/subscribe", tags);
+        await _client.PostAsJsonAsync($"{Constants.botApiPath}/{ApiSubPath}/subscribe", tags);
 
     public async Task UnsubscribeAsync(string[] tags) =>
-        await _client.PostAsJsonAsync("api/bic-fhtw/tags/unsubscribe", tags);
+        await _client.PostAsJsonAsync($"{Constants.botApiPath}/{ApiSubPath}/unsubscribe", tags);
 
     public async Task BlacklistAsync(string[] tags) =>
-        await _client.PostAsJsonAsync("api/bic-fhtw/tags/blacklist", tags);
+        await _client.PostAsJsonAsync($"{Constants.botApiPath}/{ApiSubPath}/blacklist", tags);
 
     public async Task UnblacklistAsync(string[] tags) =>
-        await _client.PostAsJsonAsync("api/bic-fhtw/tags/unblacklist", tags);
+        await _client.PostAsJsonAsync($"{Constants.botApiPath}/{ApiSubPath}/unblacklist", tags);
 
 }

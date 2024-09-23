@@ -17,11 +17,11 @@ public class AuthorizeApi : IAuthorizeApi
     }
 
     public async Task<DiscordUserDTO> GetUserInfo() =>
-        await _httpClient.GetFromJsonAsync<DiscordUserDTO>("api/bic-fhtw/authentication/userinfo");
+        await _httpClient.GetFromJsonAsync<DiscordUserDTO>($"{Constants.botApiPath}/authentication/userinfo");
 
     public async Task Login()
     {
-        var result = await _httpClient.GetAsync("api/bic-fhtw/authentication/login");
+        var result = await _httpClient.GetAsync($"{Constants.botApiPath}/authentication/login");
         if (result.StatusCode == System.Net.HttpStatusCode.BadRequest)
             throw new Exception(await result.Content.ReadAsStringAsync());
         result.EnsureSuccessStatusCode();
@@ -29,7 +29,7 @@ public class AuthorizeApi : IAuthorizeApi
 
     public async Task Logout()
     {
-        var result = await _httpClient.PostAsync("api/bic-fhtw/Authorize/Logout", null);
+        var result = await _httpClient.PostAsync($"{Constants.botApiPath}/Authorize/Logout", null);
         result.EnsureSuccessStatusCode();
     }
 }
